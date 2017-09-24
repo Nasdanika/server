@@ -25,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -1896,6 +1899,130 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}		
 		
 		return renderPage(context, target, "XPath Evaluator", content);				
+	}
+	
+	/**
+	 * Renders and processes a form for evaluating JavaScript. 
+	 * This route method is intended to be used by application/model developers. To hide this route method override it without adding
+	 * {@link RouteMethod} annotation.
+	 * @param context
+	 * @param target
+	 * @param referrerParameter
+	 * @param referrerHeader
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(
+			comment="Helper page for evaluation of JavaScript.",
+			action = "read",
+			value = { RequestMethod.GET, RequestMethod.POST },
+			path = "JavaScriptEvaluator.html")
+	public Object javaScriptEvaluator(
+			@ContextParameter C context,
+			@TargetParameter T target,						
+			@QueryParameter("script") String script) throws Exception {
+	
+		if (!(target instanceof CDOObject)) {
+			return Action.NOT_FOUND;
+		}
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
+		
+		// Breadcrumbs
+		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+		renderObjectPath(context, target, "JavaScript Evaluator", breadCrumbs);
+		if (!breadCrumbs.isEmpty()) {
+			content.content(breadCrumbs);
+		}
+		
+		// Object header
+		Tag objectHeader = content.getFactory().tag(
+				TagName.h3, 
+				renderObjectHeader(context, target, appConsumer), 
+				" - ", 
+				// TODO - doc system article and link to the article.
+				htmlFactory.link("https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/", "JavaScript").attribute("title", "Use 'target' and 'context' bindings"), 
+				" Evaluator");
+		content.content(objectHeader);				
+		
+		Form form = htmlFactory.form().action("JavaScriptEvaluator.html").method(Method.post).style().margin().bottom("5px");
+		
+		TextArea scriptTextArea = htmlFactory.textArea().required().rows(15).name("script");
+		if (script!= null) {
+			scriptTextArea.content(StringEscapeUtils.escapeHtml4(script));
+		}
+		
+		FormGroup<?> scriptFormGroup = form.formGroup("JavaScript*", scriptTextArea, "Script to evaluate, use 'target' and 'context' bindings.");
+		form.content(htmlFactory.tag(TagName.hr));
+		form.button("Evaluate").type(Button.Type.SUBMIT).style(Style.PRIMARY);
+		
+		content.content(form);
+		
+		if (context.getMethod() == RequestMethod.POST) {
+			try {
+			    ScriptEngineManager factory = new ScriptEngineManager();
+			    ScriptEngine engine = factory.getEngineByName("nashorn");
+			    Bindings bindings = engine.createBindings();
+			    bindings.put("target", target);
+			    bindings.put("context", context);
+			    Object value = engine.eval(script, bindings);
+				if (value instanceof Iterable) {
+					Table resultsTable = htmlFactory.table().bordered();
+					Iterator<?> rit = ((Iterable<?>) value).iterator();
+					while (rit.hasNext()) {
+						Object element = rit.next();
+						if (element == null) {
+							resultsTable.row(htmlFactory.label(Style.SUCCESS, "No result"), "", ""); 
+						} else {
+							if (element instanceof EObject) {
+								EObject eObject = (EObject) element;
+								Renderer<C, EObject> re = getRenderer(eObject);
+								EClass eClass = eObject.eClass();
+								Object resultClassDocIcon = renderDocumentationIcon(context, eClass, appConsumer, true);
+								if (resultClassDocIcon == null) {
+									resultClassDocIcon = "";
+								}
+								String typeInfo = String.valueOf((re == null ? this : re).renderNamedElementLabel(context, eClass)) + resultClassDocIcon +" ("+eObject.getClass().getName()+")";
+								Object link = re == null ? "" : re.renderLink(context, eObject, true);
+								resultsTable.row(typeInfo, StringEscapeUtils.escapeHtml4(eObject.toString()), link);
+							} else {
+								resultsTable.row(element.getClass().getName(), StringEscapeUtils.escapeHtml4(element.toString()), "");							
+							}
+						}
+						
+					}
+					content.content(htmlFactory.panel(Style.SUCCESS, "Results", resultsTable, null));
+				} else {
+					if (value == null) {
+						content.content(htmlFactory.label(Style.SUCCESS, "No result")); 
+					} else {
+						if (value instanceof EObject) {
+							EObject eObject = (EObject) value;
+							Renderer<C, EObject> re = getRenderer(eObject);
+							EClass eClass = eObject.eClass();
+							Object resultClassDocIcon = renderDocumentationIcon(context, eClass, appConsumer, true);
+							if (resultClassDocIcon == null) {
+								resultClassDocIcon = "";
+							}
+							String header = "Result - " + (re == null ? this : re).renderNamedElementLabel(context, eClass) + resultClassDocIcon +" ("+eObject.getClass().getName()+")";
+							Object footer = re == null ? null : re.renderLink(context, eObject, true);
+							content.content(htmlFactory.panel(Style.SUCCESS, header, StringEscapeUtils.escapeHtml4(eObject.toString()), footer));
+						} else {
+							content.content(htmlFactory.panel(Style.SUCCESS, "Result - "+value.getClass().getName(), StringEscapeUtils.escapeHtml4(value.toString()), null));							
+						}
+					}
+				}
+			} catch (Exception e) {
+				scriptFormGroup.status(Status.ERROR);
+				content.content(htmlFactory.label(Style.DANGER, "ERROR: "+e));
+				e.printStackTrace();
+			}
+		}		
+		
+		return renderPage(context, target, "JavaScript Evaluator", content);				
 	}
 	
 	/**
