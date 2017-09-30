@@ -6,7 +6,7 @@
          <meta.schema plugin="org.nasdanika.cdo.web" id="renderer" name="EObject Renderer"/>
       </appinfo>
       <documentation>
-         Defines renderer for a instances of specified EClass.
+         Defines renderer for instances of specified EClass.
       </documentation>
    </annotation>
 
