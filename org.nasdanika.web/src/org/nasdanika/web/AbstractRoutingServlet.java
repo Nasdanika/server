@@ -218,7 +218,7 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 			}
 			if (action==null) {			
 				resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-			} else if (action == Action.UNAUTHORIZED && loginURL != null) {
+			} else if (action == Action.UNAUTHORIZED && loginURL != null && req.getHeader("Authorization") == null) {
 				// Sending redirect to the login page. 
 				// The login page is responsible to redirect to the original request url upon
 				// successful login.

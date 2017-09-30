@@ -1,6 +1,7 @@
 package org.nasdanika.cdo;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
@@ -22,5 +23,14 @@ public interface CDOViewContextSubject<V extends CDOView, CR> {
 	 * @return Time when subject was associated with principals.
 	 */
 	long getTimestamp();
+	
+	/**
+	 * Subject may configure authorization environment, e.g. add contextual entries.
+	 * @param environment
+	 * @return
+	 */
+	default Map<String, Object> configureAuthorizationEnvironment(Map<String, Object> environment) {
+		return environment;
+	}
 	                                                 
 }

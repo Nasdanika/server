@@ -190,6 +190,6 @@ public interface Realm<CR> extends CDOObject {
 			return getAllUsers().isEmpty();
 		}
 		return getAdministrators().isEmpty() || getAdministrators().contains(principal);
-	};	
+	}
 
 } // Realm

@@ -28,6 +28,7 @@ import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.Token;
 import org.nasdanika.cdo.security.User;
 import org.nasdanika.cdo.security.util.SecurityValidator;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -81,6 +82,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass userEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass tokenEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -527,6 +535,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EClass getUser() {
 		return userEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getToken() {
+		return tokenEClass;
 	}
 
 	/**
@@ -1057,6 +1074,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		userEClass = createEClass(USER);
 
+		tokenEClass = createEClass(TOKEN);
+
 		loginUserEClass = createEClass(LOGIN_USER);
 		createEAttribute(loginUserEClass, LOGIN_USER__LOGIN);
 
@@ -1116,6 +1135,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		loginPasswordRealmEClass.getEGenericSuperTypes().add(g1);
 		groupEClass.getESuperTypes().add(this.getPrincipal());
 		userEClass.getESuperTypes().add(this.getPrincipal());
+		tokenEClass.getESuperTypes().add(this.getPrincipal());
 		g1 = createEGenericType(this.getUser());
 		g2 = createEGenericType(loginUserEClass_CR);
 		g1.getETypeArguments().add(g2);
@@ -1286,6 +1306,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(userEClass, User.class, "User", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(tokenEClass, Token.class, "Token", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(loginUserEClass, LoginUser.class, "LoginUser", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginUser_Login(), ecorePackage.getEString(), "login", null, 1, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1836,6 +1858,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "User is a Principal which can be authenticated using credentials."
 		   });	
 		addAnnotation
+		  (tokenEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Base class for application-specific tokens.\r\n\r\nWhen TokenCredentials are passed to authenticate(), the default implementation in LoginsPasswordRealm takes the part \r\nof the token before the first dot and decodes it as CDOID. Then it gets an object by that ID and, if it is Token, returns it.\r\n"
+		   });	
+		addAnnotation
 		  (loginUserEClass, 
 		   source, 
 		   new String[] {
@@ -1994,6 +2022,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "icon", "fa fa-user"
+		   });	
+		addAnnotation
+		  (tokenEClass, 
+		   source, 
+		   new String[] {
+			 "label", "{{eclass-name}}",
+			 "icon", "fa fa-tag"
 		   });	
 		addAnnotation
 		  (loginUserEClass, 

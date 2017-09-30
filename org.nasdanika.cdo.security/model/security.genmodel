@@ -132,22 +132,8 @@
     </genClasses>
     <genClasses ecoreClass="security.ecore#//User">
       <genTypeParameters ecoreTypeParameter="security.ecore#//User/CR"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//User/tokens"/>
     </genClasses>
-    <genClasses ecoreClass="security.ecore#//Token">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Token/hashedValue"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Token/startDate"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Token/endDate"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Token/comment"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Token/permissions"/>
-      <genOperations ecoreOperation="security.ecore#//Token/authorize">
-        <genParameters ecoreParameter="security.ecore#//Token/authorize/context"/>
-        <genParameters ecoreParameter="security.ecore#//Token/authorize/target"/>
-        <genParameters ecoreParameter="security.ecore#//Token/authorize/action"/>
-        <genParameters ecoreParameter="security.ecore#//Token/authorize/qualifier"/>
-        <genParameters ecoreParameter="security.ecore#//Token/authorize/environment"/>
-      </genOperations>
-    </genClasses>
+    <genClasses ecoreClass="security.ecore#//Token"/>
     <genClasses ecoreClass="security.ecore#//LoginUser">
       <genTypeParameters ecoreTypeParameter="security.ecore#//LoginUser/CR"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginUser/login"/>

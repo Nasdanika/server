@@ -6,6 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -16,6 +20,8 @@ import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.Token;
+import org.nasdanika.cdo.security.TokenCredentials;
 import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.NasdanikaException;
 
@@ -164,26 +170,40 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 */
 	@Override
 	public EList<Principal> authenticate(LoginPasswordCredentials credentials) {
-		for (User<LoginPasswordCredentials> user: getAllUsers()) {
-			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
-				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
-				try {
-					if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
-						try {
-							MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM);
-							md.update(lphUser.getLogin().getBytes(UTF_8));
-							md.update((byte) 0); // Separator
-							md.update(credentials.getPassword().getBytes(UTF_8));
-							if (Arrays.equals(md.digest(), lphUser.getPasswordHash())) {
-								return ECollections.singletonEList(lphUser);
+		if (credentials instanceof TokenCredentials) {
+			String token = credentials.getPassword();
+			int idx = token.indexOf('.');
+			try {
+				CDOID tokenID = CDOIDUtil.read(idx == -1 ? token : token.substring(0, idx));
+				CDOObject tokenObj = cdoView().getObject(tokenID);
+				if (tokenObj instanceof Token) {
+					return ECollections.singletonEList((Principal) tokenObj);
+				}
+			} catch (ObjectNotFoundException | IllegalArgumentException e) {
+				return ECollections.emptyEList();				
+			}
+		} else {
+			for (User<LoginPasswordCredentials> user: getAllUsers()) {
+				if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
+					LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
+					try {
+						if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
+							try {
+								MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM);
+								md.update(lphUser.getLogin().getBytes(UTF_8));
+								md.update((byte) 0); // Separator
+								md.update(credentials.getPassword().getBytes(UTF_8));
+								if (Arrays.equals(md.digest(), lphUser.getPasswordHash())) {
+									return ECollections.singletonEList(lphUser);
+								}
+							} catch (Exception e) {
+								throw new NasdanikaException(e);
 							}
-						} catch (Exception e) {
-							throw new NasdanikaException(e);
 						}
+					} catch (Exception e) {
+						// TODO Proper logging
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					// TODO Proper logging
-					e.printStackTrace();
 				}
 			}
 		}

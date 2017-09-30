@@ -27,6 +27,7 @@ import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.Token;
 import org.nasdanika.cdo.security.User;
 
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -137,6 +138,8 @@ public class SecurityValidator extends EObjectValidator {
 				return validateGroup((Group)value, diagnostics, context);
 			case SecurityPackage.USER:
 				return validateUser((User<?>)value, diagnostics, context);
+			case SecurityPackage.TOKEN:
+				return validateToken((Token)value, diagnostics, context);
 			case SecurityPackage.LOGIN_USER:
 				return validateLoginUser((LoginUser<?>)value, diagnostics, context);
 			case SecurityPackage.LOGIN_PASSWORD_HASH_USER:
@@ -284,6 +287,15 @@ public class SecurityValidator extends EObjectValidator {
 	 */
 	public boolean validateUser(User<?> user, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)user, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateToken(Token token, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint((EObject)token, diagnostics, context);
 	}
 
 	/**

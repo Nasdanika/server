@@ -21,6 +21,7 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.TokenCDOViewContextSubject;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.cdo.web.routes.CDOViewSessionModuleGenerator;
@@ -41,6 +42,11 @@ import org.osgi.util.tracker.ServiceTracker;
 @SuppressWarnings("serial")
 public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends CDOViewContext<V, CR>> extends RoutingServlet {
 	
+	/**
+	 * Special token type to avoid clash with other authorization types.
+	 */
+	public static final String AUTHORIZATION_TOKEN_TYPE = "NSD-CDO";
+
 	/**
 	 * Name of the host which passes user name header for SSO.  * matches any host. If not set then 
 	 * defaults to localhost.
@@ -136,7 +142,20 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			throw new ServletException("View provider not found");
 		}
 		
-		HttpSessionCDOViewContextSubject<V, CR> subject = new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), getPrincipalNames(req));
+		CDOViewContextSubject<V, CR> subject = null;
+		// Token authorization
+		String authHeader = req.getHeader("Authorization");
+		if (authHeader != null) {
+			if (authHeader.startsWith(AUTHORIZATION_TOKEN_TYPE+" ")) {
+				subject = new TokenCDOViewContextSubject<V, CR>(req.getRemoteHost(), authHeader.substring(AUTHORIZATION_TOKEN_TYPE.length()+1));
+			}
+			
+			// TODO - other authorization types, e.g. Basic
+		}
+		
+		if (subject == null) {
+			subject = new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), getPrincipalNames(req));
+		}
 		C viewContext = provider.createContext(subject);
 		HttpServletRequestContext compositeContext = createCompositeContext(path, req, resp, reqUrl, viewContext, chain);
 		compositeContext.getRootObjectsPaths().put(viewContext.getView(), reqUrl);

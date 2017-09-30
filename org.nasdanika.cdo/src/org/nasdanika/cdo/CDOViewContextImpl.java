@@ -95,6 +95,9 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 
 	@Override
 	public final boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
+		if (subject != null) {
+			environment = subject.configureAuthorizationEnvironment(environment);
+		}
 		if (target instanceof CDOObject && ((CDOObject) target).cdoView() == getView()) {
 			for (Principal principal: getPrincipals()) {
 				AccessDecision accessDecision = principal.authorize(this, (EObject) target, action, qualifier, environment);

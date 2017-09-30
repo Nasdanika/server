@@ -144,7 +144,7 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 				 getString("_UI_PropertyDescriptor_description", "_UI_Action_description_feature", "_UI_Action_type"),
 				 SecurityPackage.Literals.ACTION__DESCRIPTION,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,

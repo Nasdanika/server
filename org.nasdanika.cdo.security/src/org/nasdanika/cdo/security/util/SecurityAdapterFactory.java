@@ -20,6 +20,7 @@ import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.Token;
 import org.nasdanika.cdo.security.User;
 
 /**
@@ -125,6 +126,10 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <CR> Adapter caseUser(User<CR> object) {
 				return createUserAdapter();
+			}
+			@Override
+			public Adapter caseToken(Token object) {
+				return createTokenAdapter();
 			}
 			@Override
 			public <CR> Adapter caseLoginUser(LoginUser<CR> object) {
@@ -243,6 +248,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createUserAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Token <em>Token</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.Token
+	 * @generated
+	 */
+	public Adapter createTokenAdapter() {
 		return null;
 	}
 

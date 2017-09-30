@@ -325,7 +325,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginUser()
 	 * @generated
 	 */
-	int LOGIN_USER = 12;
+	int LOGIN_USER = 13;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
@@ -335,7 +335,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
 	 * @generated
 	 */
-	int LOGIN_PASSWORD_HASH_USER = 13;
+	int LOGIN_PASSWORD_HASH_USER = 14;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
@@ -1234,6 +1234,88 @@ public interface SecurityPackage extends EPackage {
 	int USER_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.TokenImpl <em>Token</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.TokenImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getToken()
+	 * @generated
+	 */
+	int TOKEN = 12;
+
+	/**
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN__MEMBER_OF = PRINCIPAL__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN__PERMISSIONS = PRINCIPAL__PERMISSIONS;
+
+	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN__DISABLED = PRINCIPAL__DISABLED;
+
+	/**
+	 * The number of structural features of the '<em>Token</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Accept</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
+
+	/**
+	 * The operation id for the '<em>Get Realm</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN___GET_REALM = PRINCIPAL___GET_REALM;
+
+	/**
+	 * The number of operations of the '<em>Token</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOKEN_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1412,7 +1494,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGuest()
 	 * @generated
 	 */
-	int GUEST = 14;
+	int GUEST = 15;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -1494,7 +1576,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtected()
 	 * @generated
 	 */
-	int PROTECTED = 15;
+	int PROTECTED = 16;
 
 	/**
 	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
@@ -1549,7 +1631,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 16;
+	int CONTEXT = 17;
 
 	/**
 	 * The meta object id for the '<em>Principal Visitor</em>' data type.
@@ -1559,7 +1641,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
 	 * @generated
 	 */
-	int PRINCIPAL_VISITOR = 17;
+	int PRINCIPAL_VISITOR = 18;
 
 	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
@@ -1569,7 +1651,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 18;
+	int ACCESS_DECISION = 19;
 
 
 	/**
@@ -1580,7 +1662,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getException()
 	 * @generated
 	 */
-	int EXCEPTION = 19;
+	int EXCEPTION = 20;
 
 
 	/**
@@ -1950,6 +2032,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getUser();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Token <em>Token</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Token</em>'.
+	 * @see org.nasdanika.cdo.security.Token
+	 * @generated
+	 */
+	EClass getToken();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginUser <em>Login User</em>}'.
@@ -2723,6 +2815,16 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EClass USER = eINSTANCE.getUser();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.TokenImpl <em>Token</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.TokenImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getToken()
+		 * @generated
+		 */
+		EClass TOKEN = eINSTANCE.getToken();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.LoginUserImpl <em>Login User</em>}' class.
