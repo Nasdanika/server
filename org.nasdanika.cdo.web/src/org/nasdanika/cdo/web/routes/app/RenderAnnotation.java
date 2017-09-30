@@ -227,7 +227,7 @@ public enum RenderAnnotation {
 		
 		/**
 		 * {@link ETypedElement} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
-		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
+		 * the textarea is initialized with wysiwyg.js editor - http://wysiwygjs.github.io/. 
 		 */
 		CONTENT_TYPE("content-type"),
 		
