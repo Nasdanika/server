@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.nasdanika.cdo.web" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.nasdanika.cdo" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.nasdanika.cdo.web" id="renderer" name="EObject Renderer"/>
+         <meta.schema plugin="org.nasdanika.cdo" id="validator" name="EObject validator"/>
       </appinfo>
       <documentation>
-         Defines renderer for a instances of specified EClass.
+         Defines validator for instances of specified EClass.
       </documentation>
    </annotation>
 
@@ -54,6 +54,10 @@
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="validator" type="string" use="required">
             <annotation>
                <documentation>
@@ -78,57 +82,52 @@
                </documentation>
             </annotation>
          </attribute>
-		 <sequence>
-		   <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-		   <element ref="description" minOccurs="0" maxOccurs="1"/>
-		</sequence>
       </complexType>
    </element>
-   
-	<element name="description">
-	   <complexType>
-	      <attribute name="content-type" use="default" value="Markdown">
-	         <annotation>
-	            <documentation>
-	               
-	            </documentation>
-	         </annotation>
-	         <simpleType>
-	            <restriction base="string">
-	               <enumeration value="HTML">
-	               </enumeration>
-	               <enumeration value="Markdown">
-	               </enumeration>
-	               <enumeration value="Text">
-	               </enumeration>
-	            </restriction>
-	         </simpleType>
-	      </attribute>
-	   </complexType>
-	</element>
-      
+
+   <element name="description">
+      <complexType>
+         <attribute name="content-type" use="default" value="Markdown">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="HTML">
+                  </enumeration>
+                  <enumeration value="Markdown">
+                  </enumeration>
+                  <enumeration value="Text">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="property">
-	   <complexType>
-	      <sequence>
-	         <element ref="description" minOccurs="0" maxOccurs="1"/>
-	      </sequence>
-	      <attribute name="name" type="string" use="required">
-	         <annotation>
-	            <documentation>
-	               
-	            </documentation>
-	         </annotation>
-	      </attribute>
-	      <attribute name="value" type="string" use="required">
-	         <annotation>
-	            <documentation>
-	               
-	            </documentation>
-	         </annotation>
-	      </attribute>
-	   </complexType>
-	</element>
-   
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
 
    <annotation>
       <appinfo>
