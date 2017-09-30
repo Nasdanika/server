@@ -148,9 +148,10 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 		
-	public static final String NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX = "nsd-jstree-context-menu-";
-	public static final String JSON_DATA_REQUEST_ATTRIBUTE_KEY = Renderer.class.getName()+":jsonData";
-	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+	String CONTENT_TYPE_TEXT_HTML = "text/html";
+	String NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX = "nsd-jstree-context-menu-";
+	String JSON_DATA_REQUEST_ATTRIBUTE_KEY = Renderer.class.getName()+":jsonData";
+	String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
@@ -1517,7 +1518,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}	
 		
-		if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+		if (CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 			return value;
 		}
 		
@@ -2094,12 +2095,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		view, 
 		
 		/**
-		 * Display a link to feature view page or operation page in the left panel. Default for many features.
+		 * Display a link to feature view page or operation page in the left panel. 
 		 */
 		leftPanel,
 		
 		/**
-		 * Display a feature or result of operation invocation in an item container below the object view. 
+		 * Display a feature or result of operation invocation in an item container below the object view. Default for many features.
 		 */
 		item,
 		
@@ -3546,7 +3547,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					
 					// Non-html multi-line - wrap in PRE - use annotations to decide whether pre or not?
 					if (v instanceof String) { 
-						if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+						if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 							renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 						} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
 							renderedValue = "********";
@@ -3583,7 +3584,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						
 						// Non-html multi-line - wrap in PRE
 						if (featureValueEntry.value instanceof String) { 
-							if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+							if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 								renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 							} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
 								renderedValue = "********";
@@ -3616,7 +3617,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			// Non-html multi-line - wrap in PRE
 			if (typedElementValue instanceof String) { 
-				if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+				if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 					renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 				} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
 					renderedValue = "********";
@@ -4691,7 +4692,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				textArea.attribute(ce.getKey(), ce.getValue());
 			}
 			textArea.content(getFormControlValue(context, contextObject, typedElement, value, appConsumer));
-			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+			if (CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
 				fieldContainer.content(renderWysiwygJsInitializerScript(context, textArea)); 
 //				fieldContainer.content(htmlFactory.tag(TagName.script, "$(document).ready(function() {  $('#"+textArea.getId()+"').wysiwyg({ toolbar: 'selection'|'top'|'top-focus'|'top-selection'|'top-focus-selection'|'bottom'|'bottom-focus'|'bottom-selection'|'bottom-focus-selection' }); });"));

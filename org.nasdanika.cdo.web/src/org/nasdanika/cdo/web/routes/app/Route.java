@@ -548,7 +548,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			path = "feature/{feature}/select.html",
 			action = "update",
 			qualifier = "{feature}",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			comment="Renders a page for adding a reference to a non-containment feature.")
 	public Object selectReferenceFeatureElement(
 			@ContextParameter C context,
@@ -682,7 +682,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			path = "reference/{reference}/create/{epackage}/{eclass}",
 			action = "create",
 			qualifier = "{reference}",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			lock = @RouteMethod.Lock(type = Type.WRITE), 
 			comment="Renders a page for creating an object and adding it to a containment reference.")
 	public Object createContainementReferenceElement(
@@ -916,7 +916,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			path = "attribute/{attribute}/add.html",
 			action = "update",
 			qualifier = "{attribute}",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			lock = @RouteMethod.Lock(type = Type.WRITE), 
 			comment="Renders a page for adding a new element to a muliti-value attribute.")
 	public Object addAttributeElement(
@@ -1112,7 +1112,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			value = RequestMethod.GET,
 			qualifier = "{feature}",
 			path = "feature/{feature}/view.html",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			comment="Renders a feature view page.")
 	public Object viewFeature(
 			@ContextParameter C context,
@@ -1173,7 +1173,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			action = "update",
 			qualifier = "{feature}",
 			path = "feature/{feature}/edit.html",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			comment="Renders an edit/select page for a single-value feature.")
 	public Object editFeature(
 			@ContextParameter C context,
@@ -1191,7 +1191,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			action = "update",
 			qualifier = "{feature}",
 			path = "feature/{feature}/{element}/edit.html",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			comment="Renders an edit/select page for an element of multi-value feature.")
 	public Object editFeatureElement(
 			@ContextParameter C context,
@@ -1661,7 +1661,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			path = "feature/{feature}/delete.html",
 			action = "delete",
 			qualifier = "{feature}",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			lock = @RouteMethod.Lock(type=Type.WRITE), 
 			comment="Clears single-value feature and redirects to the referrer.")
 	public Object deleteFeature(
@@ -1716,7 +1716,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			path = "feature/{feature}/{element}/delete.html",
 			action = "delete",
 			qualifier = "{feature}",
-			produces = "text/html",
+			produces = CONTENT_TYPE_TEXT_HTML,
 			lock = @RouteMethod.Lock(type=Type.WRITE), 
 			comment="Removes an element from a multi-value feature and redirects to the referrer.")
 	public Object deleteFeatureElement(
@@ -2126,6 +2126,21 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return Action.NOP;
 	}
 	
+//	/**
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RouteMethod(comment="Renders an array of child jsTree nodes for this node for AJAX trees.")
+//	public Object getJstreeJson(@ContextParameter C context, @TargetParameter T target) throws Exception {
+//		JSONArray ret = new JSONArray();
+//		JSONObject child = new JSONObject();
+//		child.put("text", renderLabel(context, target));
+//		child.put("id", CDOIDCodec.INSTANCE.encode(context, ((CDOObject) target).cdoID()));
+//		child.put("children", true);
+//		ret.put(child);
+//		return ret;
+//	}	
+	
 	/**
 	 * @return
 	 * @throws Exception
@@ -2453,7 +2468,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	@SuppressWarnings("unchecked")
 	protected Object executeEOperation(C context, EOperationTarget<C, T> eOperationTarget, Map<String, String> pathParameters, Object[] arguments) throws Exception {
 		EOperation eOperation = eOperationTarget.getEOperation();				
-		@SuppressWarnings("unchecked")
 		T target = (T) context.getTarget();
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
