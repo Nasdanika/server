@@ -2028,10 +2028,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
 		Z: while (matcher.find()) {
 			String group = matcher.group();
-			String[] abbra = getResourceString(context, "abbreviations").split("\\|");
-			for (String abbr: abbra) {
-				if (group.trim().endsWith(abbr)) {
-					continue Z;
+			String abbreviations = getResourceString(context, "abbreviations");
+			if (abbreviations != null) {
+				String[] abbra = abbreviations.split("\\|");
+				for (String abbr: abbra) {
+					if (group.trim().endsWith(abbr)) {
+						continue Z;
+					}
 				}
 			}
 			if (matcher.end() > getMinFirstSentenceLength() && matcher.end() < getMaxFirstSentenceLength()) {
