@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -75,6 +76,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.EAttributeProtector;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Package;
 import org.nasdanika.cdo.security.Principal;
@@ -148,28 +150,24 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 		
+	public static final String PASSWORD_MASK = "********";
 	String CONTENT_TYPE_TEXT_HTML = "text/html";
 	String NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX = "nsd-jstree-context-menu-";
 	String JSON_DATA_REQUEST_ATTRIBUTE_KEY = Renderer.class.getName()+":jsonData";
 	String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
-	
 	String TITLE_KEY = "title";
-
 	String NAME_KEY = "name";
-
 	String REFERRER_KEY = ".referrer";
-	
 	String REFERRER_HEADER = "referer";
-	
 	String OBJECT_VERSION_KEY = ".object-version";
-
 	String INDEX_HTML = "index.html";
-	
 	String EXTENSION_HTML = ".html";
+	String EXTENSION_JSON = ".json";
+	String DIGEST_ALGORITHM = "SHA-256";
+	String UTF_8 = "UTF-8";
 	
-	String EXTENSION_JSON = ".json";	
 
 	/**
 	 * Rendering can be customized by annotating model element with
@@ -1545,6 +1543,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default Object parseTypedElementValue(C context, ETypedElement typedElement, Object value) throws Exception {		
 		Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
 		if (featureTypeInstanceClass.isInstance(value)) {
+			if (typedElement instanceof EAttribute && "true".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.PROTECTED))) {
+				EAttributeProtector eAttributeProtector = context.adapt(EAttributeProtector.class);
+				if (eAttributeProtector == null) {
+					eAttributeProtector = EAttributeProtector.CRYPTO_PROTECTOR;
+				}
+				return eAttributeProtector.protect((EAttribute) typedElement, value);
+			}
+			
 			return value;
 		}
 		
@@ -3553,7 +3559,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 							renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 						} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
-							renderedValue = "********";
+							renderedValue = PASSWORD_MASK;
 						}
 					}						
 					ret.content(renderedValue);
@@ -3590,7 +3596,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 								renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 							} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
-								renderedValue = "********";
+								renderedValue = PASSWORD_MASK;
 							}
 						}						
 						
@@ -3623,7 +3629,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !CONTENT_TYPE_TEXT_HTML.equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 					renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
 				} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
-					renderedValue = "********";
+					renderedValue = PASSWORD_MASK;
 				}
 			}						
 			
@@ -4189,11 +4195,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * Returns typed element value to be used in form controls like input, select, e.t.c.
-	 * This implementation returns name for enums and {@link CDOID} encoded with {@link CDOIDCodec} for {@link CDOObject}'s.
-	 * For all other values it returns HTML-escaped result of ``renderFeatureValue()``  
+	 * This implementation returns hashed password for password fields, name for enums and {@link CDOID} encoded with {@link CDOIDCodec} for {@link CDOObject}'s.
+	 * For all other values it returns HTML-escaped result of ``renderFeatureValue()``.
 	 * @param context
 	 * @param obj
 	 * @param typedElement
@@ -4202,6 +4208,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default String getFormControlValue(C context, T obj, ETypedElement typedElement, Object value, Consumer<Object> appConsumer) throws Exception {
+		if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE)) && value instanceof String) {
+			MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM);
+			md.update(typedElement.getName().getBytes(UTF_8)); // Seed			
+			md.update((byte) 0); // Separator
+			md.update(((String) value).getBytes(UTF_8));
+			return Base64.getEncoder().encodeToString(md.digest()).substring(4);
+		}
+		
 		if (value == null) {
 			return "";
 		}

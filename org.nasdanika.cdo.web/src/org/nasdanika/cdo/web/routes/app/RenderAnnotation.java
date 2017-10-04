@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.nasdanika.cdo.EAttributeProtector;
 import org.nasdanika.cdo.web.routes.app.Renderer.TypedElementLocation;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.html.Bootstrap;
@@ -33,6 +34,13 @@ public enum RenderAnnotation {
 		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is visible.
 		 */
 		VISIBLE("visible"),
+		
+		/**
+		 * {@link EAttribute} annotation defining whether the attribute shall be protected.
+		 * If 'true' then context is adapted to {@link EAttributeProtector} to perform protection. If adapt() returns null then EAttributeProtector.CRYPTO_PROTECTOR is used for
+		 * protection.
+		 */
+		PROTECTED("protected"),
 
 		/**
 		 * {@link EStructuralFeature} or {@link EClass} annotation defining whether a visible feature or object is editable, i.e. shall be displayed in the edit form or an edit button shall be displayed. A feature might be editable, but disabled.
