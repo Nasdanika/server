@@ -16,11 +16,13 @@ import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.LoginPasswordCDOViewContextSubject;
 import org.nasdanika.cdo.TokenCDOViewContextSubject;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
@@ -42,6 +44,8 @@ import org.osgi.util.tracker.ServiceTracker;
 @SuppressWarnings("serial")
 public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends CDOViewContext<V, CR>> extends RoutingServlet {
 	
+	private static final String AUTHORIZATION_BASIC = "Basic ";
+
 	/**
 	 * Special token type to avoid clash with other authorization types.
 	 */
@@ -143,14 +147,19 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 		}
 		
 		CDOViewContextSubject<V, CR> subject = null;
-		// Token authorization
 		String authHeader = req.getHeader("Authorization");
 		if (authHeader != null) {
 			if (authHeader.startsWith(AUTHORIZATION_TOKEN_TYPE+" ")) {
+				// Token authorization
 				subject = new TokenCDOViewContextSubject<V, CR>(req.getRemoteHost(), authHeader.substring(AUTHORIZATION_TOKEN_TYPE.length()+1));
+			} else if (authHeader.startsWith(AUTHORIZATION_BASIC)) {
+				// Basic authorization
+				String decoded = new String(Base64.decode(authHeader.substring(AUTHORIZATION_BASIC.length())));
+				int idx = decoded.indexOf(":");
+				if (idx != -1) {
+					subject = new LoginPasswordCDOViewContextSubject<V, CR>(decoded.substring(0, idx), decoded.substring(idx+1));
+				}							
 			}
-			
-			// TODO - other authorization types, e.g. Basic
 		}
 		
 		if (subject == null) {
