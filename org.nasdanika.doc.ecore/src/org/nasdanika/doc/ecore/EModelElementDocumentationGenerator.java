@@ -214,7 +214,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		}
 		String packageLocation = getEPackageLocation(eClassifier.getEPackage()); 
 		String eClassifierIcon = withIcon ? eClassifierIcon(eClassifier) : "";
-		return getHtmlFactory().link(packageLocation+"/"+eClassifier.getName()+".html", eClassifierIcon, eClassifier.getName()).toString();		
+		return getHtmlFactory().link(packageLocation+eClassifier.getName()+".html", eClassifierIcon, eClassifier.getName()).toString();		
 	}
 	
 	/**
