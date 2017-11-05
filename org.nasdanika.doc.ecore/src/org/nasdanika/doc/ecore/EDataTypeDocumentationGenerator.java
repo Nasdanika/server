@@ -20,19 +20,21 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		ret.content(htmlFactory.tag(TagName.h2, eClassifierIcon(getModelElement()), getModelElement().getName()));
 		
 		Class<?> instanceClass = getModelElement().getInstanceClass();
-		boolean isArray = instanceClass.isArray();
-		if (isArray) {
-			instanceClass = instanceClass.getComponentType();
-		}
-		Tag icDiv = htmlFactory.div().style("margin-bottom", "5px").style("font-family", "monospace");
-		ret.content(icDiv);
-		if (instanceClass.isPrimitive()) {
-			icDiv.content(instanceClass.getName());
-		} else {
-			icDiv.content(javaDocLink(getModelElement().getInstanceClassName()));
-		}
-		if (isArray) {
-			icDiv.content("[]");
+		if (instanceClass != null) {
+			boolean isArray = instanceClass.isArray();
+			if (isArray) {
+				instanceClass = instanceClass.getComponentType();
+			}
+			Tag icDiv = htmlFactory.div().style("margin-bottom", "5px").style("font-family", "monospace");
+			ret.content(icDiv);
+			if (instanceClass.isPrimitive()) {
+				icDiv.content(instanceClass.getName());
+			} else {
+				icDiv.content(javaDocLink(getModelElement().getInstanceClassName()));
+			}
+			if (isArray) {
+				icDiv.content("[]");
+			}
 		}
 		String doc = getModelDocumentation(getModelElement());
 		if (!isBlank(doc)) {
