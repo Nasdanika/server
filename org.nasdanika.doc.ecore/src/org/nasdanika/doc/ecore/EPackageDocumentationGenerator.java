@@ -135,7 +135,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		
 		EPackage eSuperPackage = getModelElement().getESuperPackage();
 		if (eSuperPackage!=null) {
-			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link(getEPackageLocation(getModelElement())+PACKAGE_SUMMARY_HTML)));			
+			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link(getEPackageLocation(getModelElement())+PACKAGE_SUMMARY_HTML, eSuperPackage.getName())));			
 		}
 		
 		for (EAnnotation eAnnotation: getModelElement().getEAnnotations()) {
