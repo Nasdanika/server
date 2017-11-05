@@ -6,10 +6,10 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Nasdanika
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.apache.commons.lang3;bundle-version="3.3.2",
- org.nasdanika.html,
+ org.nasdanika.html;visibility:=reexport,
  org.jsoup;bundle-version="1.7.2",
  org.apache.commons.codec;bundle-version="1.10.0",
- org.pegdown;bundle-version="1.5.0",
+ org.pegdown;bundle-version="1.5.0";visibility:=reexport,
  org.nasdanika.icons;bundle-version="1.0.0",
  org.nasdanika.web.resources;bundle-version="1.0.0",
  org.eclipse.emf.ecore,
