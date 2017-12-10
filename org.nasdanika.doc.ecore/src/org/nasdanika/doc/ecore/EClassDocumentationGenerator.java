@@ -484,7 +484,11 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 
 	protected void diagramTab(Tabs tabs) {
 		HTMLFactory htmlFactory = getHtmlFactory();
-		tabs.item("Diagram", htmlFactory.fragment(htmlFactory.tag(TagName.img).attribute("src", getModelElement().getName()+".png")));
+		tabs.item("Diagram", htmlFactory.fragment(htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation())));
+	}
+
+	protected String getDiagramImageLocation() {
+		return getModelElement().getName()+".png";
 	}
 
 }

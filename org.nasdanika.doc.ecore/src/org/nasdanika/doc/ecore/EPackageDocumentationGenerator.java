@@ -162,8 +162,12 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	protected void diagramTab(Tabs tabs) {
 		HTMLFactory htmlFactory = getHtmlFactory();
-		Tag diagramImage = htmlFactory.tag(TagName.img).attribute("src", PACKAGE_SUMMARY_PNG);
+		Tag diagramImage = htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation());
 		tabs.item("Diagram", htmlFactory.fragment(diagramImage));
+	}
+
+	protected String getDiagramImageLocation() {
+		return PACKAGE_SUMMARY_PNG;
 	}
 
 	protected void eClassifiersTab(Tabs tabs) {		
