@@ -488,7 +488,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	}
 
 	protected String getDiagramImageLocation() {
-		return getModelElement().getName()+".png";
+		return getNamedElementFileName(getModelElement())+".png";
 	}
 
 }

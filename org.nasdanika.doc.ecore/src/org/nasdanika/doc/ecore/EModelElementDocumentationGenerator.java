@@ -1,5 +1,8 @@
 package org.nasdanika.doc.ecore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -198,6 +201,51 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 	}
 	
 	/**
+	 * @param namedElement
+	 * @return Legal model element file/directory name. The name may be produced by returning the element name as-is, encoding it or mapping.
+	 * This implementation HEX encodes EPackage Ns URI's. For EClassifier's it returns EClassifier name as-is if {@link URLEncoder}.encode() does not
+	 * change the name. Otherwise it returns HEX encoded name. If validateNamedElementFileName() returns false the name is de-duplicated by adding -&lt;counter&gt; 
+	 * where counter is an integer which increments from 0 to one million and then gets converted to string with {@link Character}.MAX_RADIX.
+	 */
+	public String getNamedElementFileName(ENamedElement namedElement) {
+		if (namedElement instanceof EPackage) {
+			return Hex.encodeHexString(((EPackage) namedElement).getNsURI().getBytes(StandardCharsets.UTF_8));
+		}
+		
+		if (namedElement instanceof EClassifier) {
+			for (int i = -1; i < 1000000; ++i) {
+				try {
+					String urlEncodedName = URLEncoder.encode(namedElement.getName(), "UTF-8");
+					if (urlEncodedName.equals(namedElement.getName())) {
+						return urlEncodedName;
+					}
+					String fileName = Hex.encodeHexString(namedElement.getName().getBytes(StandardCharsets.UTF_8));
+					if (i > -1) {
+						fileName += "-"+Integer.toString(i, Character.MAX_RADIX);
+					}
+					if (validateNamedElementFileName(namedElement, fileName)) {
+						return fileName;
+					}
+				} catch (UnsupportedEncodingException e) {
+					return namedElement.getName();
+				}
+			}
+		}
+		
+		return namedElement.getName();
+	}
+
+	/**
+	 * Validates that the name does not already exist.  
+	 * @param element
+	 * @param fileName
+	 * @return
+	 */
+	protected boolean validateNamedElementFileName(ENamedElement element, String fileName) {
+		return true;
+	}
+	
+	/**
 	 * @param ePackage
 	 * @return Base URL for {@link EPackage} documentation.
 	 */
@@ -205,7 +253,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		if (modelElement instanceof EClassifier && ((EClassifier) modelElement).getEPackage() == ePackage) {
 			return ""; // Same package.
 		}
-		return "../"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/";
+		return "../"+getNamedElementFileName(ePackage)+"/";
 	}
 		
 	protected String eClassifierLink(EClassifier eClassifier, boolean withIcon) {
@@ -214,7 +262,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		}
 		String packageLocation = getEPackageLocation(eClassifier.getEPackage()); 
 		String eClassifierIcon = withIcon ? eClassifierIcon(eClassifier) : "";
-		return getHtmlFactory().link(packageLocation+eClassifier.getName()+".html", eClassifierIcon, eClassifier.getName()).toString();		
+		return getHtmlFactory().link(packageLocation+getNamedElementFileName(eClassifier)+".html", eClassifierIcon, eClassifier.getName()).toString();		
 	}
 	
 	/**
