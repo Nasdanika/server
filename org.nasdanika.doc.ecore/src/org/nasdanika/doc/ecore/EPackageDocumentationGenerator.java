@@ -202,15 +202,15 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (EClassifier eClassifier: pClassifiers) {
 			if (eClassifier instanceof EClass) {
 				Row row = classTable.row();
-				row.cell(htmlFactory.link(packagePath+eClassifier.getName()+".html", eClassifier.getName()));
+				row.cell(eClassifierLink(eClassifier, false));
 				row.cell(getFirstDocSentence(eClassifier));
 			} else if (eClassifier instanceof EEnum) {
 				Row row = enumTable.row();
-				row.cell(htmlFactory.link(packagePath+eClassifier.getName()+".html", eClassifier.getName()));
+				row.cell(eClassifierLink(eClassifier, false));
 				row.cell(getFirstDocSentence(eClassifier));
 			} else {
 				Row row = dataTypeTable.row();
-				row.cell(htmlFactory.link(packagePath+eClassifier.getName()+".html", eClassifier.getName()));
+				row.cell(eClassifierLink(eClassifier, false));
 				row.cell(eClassifier.getInstanceTypeName());
 				row.cell(getFirstDocSentence(eClassifier));
 			}

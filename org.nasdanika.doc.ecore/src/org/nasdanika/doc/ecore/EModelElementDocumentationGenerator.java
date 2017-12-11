@@ -250,7 +250,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 	 * @return Base URL for {@link EPackage} documentation.
 	 */
 	protected String getEPackageLocation(EPackage ePackage) {
-		if (modelElement instanceof EClassifier && ((EClassifier) modelElement).getEPackage() == ePackage) {
+		if (modelElement == ePackage || (modelElement instanceof EClassifier && ((EClassifier) modelElement).getEPackage() == ePackage)) {
 			return ""; // Same package.
 		}
 		return "../"+getNamedElementFileName(ePackage)+"/";
