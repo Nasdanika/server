@@ -1,0 +1,7 @@
+models:
+  - ../org.nasdanika.cdo.scheduler/model/scheduler.genmodel
+  - ../org.nasdanika.cdo.security/model/security.genmodel
+  - ..//org.nasdanika.osgi.model/model/model.genmodel
+  
+output:
+  site: /org.nasdanika.repository/gen-modeldoc-site
