@@ -37,7 +37,7 @@
 		</repository>
 		<repository>
 			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.5.v20170502/</url>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.8.v20171121/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
