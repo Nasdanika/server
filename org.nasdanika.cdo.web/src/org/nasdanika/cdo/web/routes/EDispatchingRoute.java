@@ -448,15 +448,17 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 		if (instanceClass.isPrimitive()) {
 			instanceClass = CoreUtil.PRIMITIVES_TO_BOXES_MAP.get(instanceClass);
 		}
-		if (Number.class.isAssignableFrom(instanceClass)) {
-			DecimalFormat theFormat = new DecimalFormat(format);
-			value = theFormat.parse(String.valueOf(value));
-		} else if (Date.class.isAssignableFrom(instanceClass)) {
-			SimpleDateFormat theFormat = new SimpleDateFormat(format);
-			value = theFormat.parse(String.valueOf(value));
-		} else {		
-			MessageFormat theFormat = new MessageFormat(format);
-			value = theFormat.parse(String.valueOf(value))[0];
+		if (format != null) {
+			if (Number.class.isAssignableFrom(instanceClass)) {
+				DecimalFormat theFormat = new DecimalFormat(format);
+				value = theFormat.parse(String.valueOf(value));
+			} else if (Date.class.isAssignableFrom(instanceClass)) {
+				SimpleDateFormat theFormat = new SimpleDateFormat(format);
+				value = theFormat.parse(String.valueOf(value));
+			} else {		
+				MessageFormat theFormat = new MessageFormat(format);
+				value = theFormat.parse(String.valueOf(value))[0];
+			}
 		}
 		
 		if (instanceClass!=null) {
