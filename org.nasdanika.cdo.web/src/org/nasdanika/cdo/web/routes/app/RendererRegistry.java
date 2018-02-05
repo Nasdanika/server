@@ -65,7 +65,7 @@ class RendererRegistry {
 		}
 		
 		boolean match(EClass eClass) {
-			if (CoreUtil.isBlank(eClassName) || eClass.getName().contentEquals(eClassName)) {
+			if (CoreUtil.isBlank(eClassName) || eClass.getName().equals(eClassName)) {
 				return eClass.getEPackage().getNsURI().equals(namespaceURI);
 			}
 			return false;
