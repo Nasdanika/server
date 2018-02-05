@@ -335,6 +335,9 @@ public class PlantUmlTextGenerator {
 	
 	protected static String qualifiedName(EClassifier eClassifier) {
 		EPackage ePackage = eClassifier.getEPackage();
+		if (ePackage == null) {
+			return eClassifier.getName();				
+		}
 		return "\""+ePackage.getName()+" ("+ePackage.getNsURI()+")."+eClassifier.getName()+"\"";
 	}
 	
