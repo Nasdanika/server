@@ -652,7 +652,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
 						EReference containmentFeature = c.eContainmentFeature();
 						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
-						if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
+						if (containmentFeature != null && containerRenderer.isPathFeature(context, cContainer, containmentFeature)) {
 							TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 							if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
@@ -691,7 +691,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
 			EReference containmentFeature = obj.eContainmentFeature();
 			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
-			if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
+			if (containmentFeature != null && containerRenderer.isPathFeature(context, objContainer, containmentFeature)) {
 				TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 				if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
@@ -729,6 +729,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, objIconAndLabelSpan);
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action).attribute("title", "Action"));
 		}
+	}
+	
+	/**
+	 * @param eClass
+	 * @param feature
+	 * @return true if the feature shall be shown in breadcrumbs object path.
+	 */
+	default boolean isPathFeature(C context, T obj, EStructuralFeature feature) throws Exception {
+		String treeFeatureAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TREE_FEATURE);
+		if ("true".equals(treeFeatureAnnotation)) {
+			return true;
+		}
+		if ("false".equals(treeFeatureAnnotation)) {
+			return false;
+		}
+		return true;
 	}
 	
 	// TODO - isPathFeature() method, also use in jsTree rendering. Rename getTreeFeatures to getPathFeatures()
@@ -1955,8 +1971,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		button.style("cursor", "help");			
 		return button;
 	}
-	
-	
+		
 	/**
 	 * Converts markdown to HTML using {@link PegDownProcessor}.
 	 * @param context
@@ -1965,7 +1980,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default String markdownToHtml(C context, String markdown) throws Exception {		
-		return new PegDownProcessor(PEGDOWN_OPTIONS).markdownToHtml(markdown, createPegDownLinkRenderer(context));		
+		LinkRenderer pegDownLinkRenderer = createPegDownLinkRenderer(context);
+		try {
+			return new PegDownProcessor(PEGDOWN_OPTIONS).markdownToHtml(markdown, pegDownLinkRenderer);
+		} catch (Exception e) {
+			System.err.println("Error converting markdown to HTML: "+e);
+			System.err.println("Problematic markdown:");
+			System.err.println(markdown);
+			System.err.println("=== End of problematic markdown ===");
+			e.printStackTrace();
+			return markdown;
+		}
 	}
 	
 	/**

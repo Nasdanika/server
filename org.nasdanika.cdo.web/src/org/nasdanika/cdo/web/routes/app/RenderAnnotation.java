@@ -403,6 +403,12 @@ public enum RenderAnnotation {
 		TREE_FEATURE("tree-feature"),
 		
 		/**
+		 * {@link EStructuralFeature} annotation indicating whether the feature shall be shown in the breadcrumbs path. True or false.
+		 * In the absence of this annotation containing many features are considered as tree features. 
+		 */
+		PATH_FEATURE("path-feature"),
+		
+		/**
 		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
 		  * appear directly under the container in the tree. 
 		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
