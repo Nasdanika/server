@@ -60,26 +60,28 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	protected ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
 	private String sessionWebSocketServletPath;
 	private String userNameHeader;
-	private InetAddress userNameHeaderHost;
+	private String userNameHeaderHost;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		userNameHeader = config.getInitParameter("user-name-header");
-		String userNameHeaderHostStr = System.getProperty(USER_NAME_HEADER_HOST_PROPERTY);
-		try {
-			if (userNameHeaderHostStr == null) {
-				userNameHeaderHostStr = "127.0.0.1";
+		if (userNameHeader != null) {
+			String userNameHeaderHostStr = System.getProperty(USER_NAME_HEADER_HOST_PROPERTY);
+			try {
+				if (userNameHeaderHostStr == null) {
+					userNameHeaderHostStr = "127.0.0.1";
+				}
+				
+				if ("*".equals(userNameHeaderHostStr)) {
+					System.out.println("Accepting user name header " +userNameHeader + " from any host");				
+				} else {
+					userNameHeaderHost = InetAddress.getByName(userNameHeaderHostStr).getHostAddress();
+					System.out.println("Accepting user name header " +userNameHeader + " from "+userNameHeaderHost);
+				}
+			} catch (UnknownHostException e) {
+				throw new ServletException("Unknown user-name-header-host", e);
 			}
-			
-			if ("*".equals(userNameHeaderHostStr)) {
-				System.out.println("Accepting user name header " +userNameHeader + " from any host");				
-			} else {
-				userNameHeaderHost = InetAddress.getByName(userNameHeaderHostStr);
-				System.out.println("Accepting user name header " +userNameHeader + " from "+userNameHeaderHost);
-			}
-		} catch (UnknownHostException e) {
-			throw new ServletException("Unknown user-name-header-host", e);
 		}
 		
 		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
@@ -180,7 +182,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	 */
 	protected List<String> getPrincipalNames(HttpServletRequest req) {
 		Principal userPrincipal = req.getUserPrincipal();
-		if (userPrincipal!=null) {
+		if (userPrincipal != null) {
 			return Collections.singletonList(userPrincipal.getName());
 		}
 		if (userNameHeader == null) {
@@ -192,14 +194,8 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 		}
 		// Validating correctness of the remote address
 		if (userNameHeaderHost!= null) {
-			try {
-				InetAddress remoteAddr = InetAddress.getByName(req.getRemoteAddr());
-				if (!userNameHeaderHost.equals(remoteAddr)) {
-					return Collections.emptyList();				
-				}
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-				return Collections.emptyList();
+			if (!userNameHeaderHost.equals(req.getRemoteAddr())) {
+				return Collections.emptyList();				
 			}
 		}
 				
