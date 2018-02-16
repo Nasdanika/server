@@ -260,8 +260,12 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		if (eClassifier==null) {
 			return "";
 		}
-		String packageLocation = getEPackageLocation(eClassifier.getEPackage()); 
 		String eClassifierIcon = withIcon ? eClassifierIcon(eClassifier) : "";
+		if (eClassifier.getEPackage() == null) {
+			// Strange, but seems to be a case sometimes.
+			return (eClassifierIcon == null ? "" : eClassifierIcon)+" "+eClassifier.getName();
+		}
+		String packageLocation = getEPackageLocation(eClassifier.getEPackage()); 
 		return getHtmlFactory().link(packageLocation+getNamedElementFileName(eClassifier)+".html", eClassifierIcon, eClassifier.getName()).toString();		
 	}
 	
