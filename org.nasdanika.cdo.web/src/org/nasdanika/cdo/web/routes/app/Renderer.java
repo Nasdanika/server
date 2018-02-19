@@ -737,11 +737,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return true if the feature shall be shown in breadcrumbs object path.
 	 */
 	default boolean isPathFeature(C context, T obj, EStructuralFeature feature) throws Exception {
-		String treeFeatureAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TREE_FEATURE);
-		if ("true".equals(treeFeatureAnnotation)) {
+		String pathFeatureAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.PATH_FEATURE);
+		if ("true".equals(pathFeatureAnnotation)) {
 			return true;
 		}
-		if ("false".equals(treeFeatureAnnotation)) {
+		if ("false".equals(pathFeatureAnnotation)) {
 			return false;
 		}
 		return true;
@@ -2830,13 +2830,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}	
 	
 	/**
-	 * Renders edit icon. This implementation renders Bootstrap Glyphicon pencil.
+	 * Renders edit icon. 
 	 * @param context
 	 * @return
 	 * @throws Exception 
 	 */
 	default Tag renderEditIcon(C context) throws Exception {
-		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.pencil).getTarget();
+		return getHTMLFactory(context).fontAwesome().custom("edit").getTarget();
 	}
 
 	/**
@@ -2919,7 +2919,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderSaveIcon(C context) throws Exception {
-		return getHTMLFactory(context).fontAwesome().textEditor(TextEditor.floppy_o).getTarget();
+		return getHTMLFactory(context).fontAwesome().custom("save").getTarget();
 	}
 			
 	/**
@@ -5869,7 +5869,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (isEditable(context, obj, obj.eClass()) && context.authorizeUpdate(obj, null, null)) {
 			JsTreeContextMenuItem editMenuItem = htmlFactory.jsTreeContextMenuItem();
 			menuItems.put("edit", editMenuItem);
-			editMenuItem.icon("fa fa-pencil").label(getResourceString(context, "edit"));
+			editMenuItem.icon("fas fa-edit").label(getResourceString(context, "edit"));
 
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
@@ -6577,7 +6577,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, appConsumer, true);						
 				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType), classDocIcon);
 				
-				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
+				Tag overlay = htmlFactory.spinnerOverlay(Spinner.spinner).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 				// Form elements
 				boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, featureElementType, RenderAnnotation.HORIZONTAL_FORM));
@@ -6759,7 +6759,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// Object header
 			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, appConsumer));
 			
-			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
+			Tag overlay = htmlFactory.spinnerOverlay(Spinner.spinner).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 			// Form elements
 			EClass eClass = obj.eClass();			
@@ -6977,7 +6977,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// Dialog title
 			formModal.title(getResourceString(context, "execute"), " ", renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true));
 			
-			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
+			Tag overlay = htmlFactory.spinnerOverlay(Spinner.spinner).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 			// Form elements
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
