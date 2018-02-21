@@ -2847,7 +2847,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderDeleteIcon(C context) throws Exception {
-		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.trash).getTarget();
+		return getHTMLFactory(context).span().addClass("fas").addClass("fa-trash-alt");
 	}
 
 	/**
@@ -5897,7 +5897,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainmentFeature())) {
 			JsTreeContextMenuItem deleteMenuItem = htmlFactory.jsTreeContextMenuItem();
 			menuItems.put("delete", deleteMenuItem);
-			deleteMenuItem.icon("fa fa-trash").label(getResourceString(context, "delete"));
+			deleteMenuItem.icon("far fa-trash").label(getResourceString(context, "delete"));
 			
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");

@@ -26,6 +26,7 @@ import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
 
 /**
@@ -125,7 +126,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 				} else {
 					filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue, appConsumer, false);
 				}
-				Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
+				Tag trashCanIcon = htmlFactory.tag(TagName.i).addClass("far fa-trash-alt").style().color().bootstrapColor(Color.PRIMARY);
 				// TODO - build query
 				Tag clearFilterLink = htmlFactory.link(request.getRequestURI()+queryBuilder, trashCanIcon).attribute("title", "Clear filter");						
 				filterDropDown.header(htmlFactory.span("Filter: ", filterIconAndLabel, " ", clearFilterLink).style().color().bootstrapColor(Color.PRIMARY));						
