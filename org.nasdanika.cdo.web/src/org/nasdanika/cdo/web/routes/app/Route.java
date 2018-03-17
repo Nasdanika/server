@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -41,6 +42,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
@@ -97,6 +99,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.JsTreeNode;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.NamedItemsContainer;
 import org.nasdanika.html.Table;
@@ -268,7 +271,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 			}
 		}
-		
+		// 777 TODO - replace getObjectPath with getObjectURI from renderer.
 		// Single entry point (e.g. root) - redirect to it.
 		if (entryPoints.size() == 1) {
 			context.getResponse().sendRedirect(context.getObjectPath(entryPoints.iterator().next())+"/"+INDEX_HTML);
@@ -2126,21 +2129,122 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return Action.NOP;
 	}
 	
-//	/**
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RouteMethod(comment="Renders an array of child jsTree nodes for this node for AJAX trees.")
-//	public Object getJstreeJson(@ContextParameter C context, @TargetParameter T target) throws Exception {
-//		JSONArray ret = new JSONArray();
-//		JSONObject child = new JSONObject();
-//		child.put("text", renderLabel(context, target));
-//		child.put("id", CDOIDCodec.INSTANCE.encode(context, ((CDOObject) target).cdoID()));
-//		child.put("children", true);
-//		ret.put(child);
-//		return ret;
-//	}	
+	/**
+	 * @param id Parent node ID. "#" stands for the root.
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(comment="Renders an array of child jsTree nodes for this node for AJAX trees.")
+	public Object getJstreeJson(
+			@ContextParameter C context, 
+			@TargetParameter T target, 
+			@QueryParameter("id") String id) throws Exception {
+		
+		if (CoreUtil.isBlank(id)) {
+			return Action.BAD_REQUEST;
+		}
+		
+		JSONArray ret = new JSONArray();
+		if ("#".equals(id)) {
+			EObject root = EcoreUtil.getRootContainer(target);
+			Renderer<C, EObject> rootRenderer = getRenderer(root);
+			if (rootRenderer != null) {
+				JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, null, false);
+				// Mark nodes as has-readable
+				rootNode.<Boolean>accept((node, childResults) -> {
+					
+					if (Boolean.TRUE.equals(node.getData("readable"))) {
+						return true;
+					}
+					for (Boolean cr: childResults) {
+						if (cr) {
+							node.setData("has-readable", true);
+							return true;
+						}
+					}
+					return false;
+				});
+				
+				Predicate<JsTreeNode> filter = node -> Boolean.TRUE.equals(node.getData("readable")) || Boolean.TRUE.equals(node.getData("has-readable"));
+				
+				// Remove non-readable
+				rootNode.<Void>accept((node, childResult) -> {
+					Iterator<JsTreeNode> cit = node.children().iterator();
+					while (cit.hasNext()) {
+						JsTreeNode child = cit.next();
+						if (!filter.test(child)) {
+							cit.remove();
+						}
+					}
+					
+					return null;
+				});
+				
+				// Find common root
+				while (!Boolean.TRUE.equals(rootNode.getData("readable")) && rootNode.children().size() == 1) {
+					rootNode = rootNode.children().get(0);
+				}
+				
+				if (Boolean.TRUE.equals(rootNode.getData("readable"))) {
+					ret.put(rootNode.toJSON(filter));
+				} else {
+					for (JsTreeNode child: rootNode.children()) {
+						ret.put(child.toJSON(filter));					
+					}
+				}
+			}
+		} else {
+			CDOID parentId = CDOIDCodec.INSTANCE.decode(context, id);
+			CDOObject parent = ((CDOObject) target).cdoView().getObject(parentId);
+			Renderer<C, EObject> renderer = getRenderer(parent);
+			if (renderer != null) {				
+				for (JsTreeNode node: renderer.renderJsTreeNodeChildren(context, parent, null, true)) {
+					ret.put(node.toJSON());
+				}
+			}			
+		}
+		
+		JSONObject child = new JSONObject();
+		child.put("text", renderLabel(context, target));
+		child.put("id", CDOIDCodec.INSTANCE.encode(context, ((CDOObject) target).cdoID()));
+		child.put("children", true);
+		ret.put(child);
+		return ret;
+	}
 	
+	/**
+	 * @param id Object or feature ID.
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(
+			produces = "application/json",
+			path = "jstree-context-menu",
+			value = RequestMethod.GET,
+			comment="Renders an array of child jsTree nodes for this node for AJAX trees.")
+	public Object getJstreeContextMenu(
+			@ContextParameter C context, 
+			@TargetParameter T target, 
+			@QueryParameter("id") String id) throws Exception {
+
+		if (CoreUtil.isBlank(id)) {
+			return Action.BAD_REQUEST;
+		}
+
+		int dashIdx = id.indexOf('-');
+		CDOID objId = CDOIDCodec.INSTANCE.decode(context, dashIdx == -1 ? id : id.substring(0, dashIdx));
+		CDOObject obj = ((CDOObject) target).cdoView().getObject(objId);
+		Renderer<C, EObject> renderer = getRenderer(obj);
+		if (renderer == null) {
+			return Action.NOT_FOUND;
+		}
+		if (dashIdx == -1) {
+			return renderer.renderJsTreeNodeContextMenu(context, obj);
+		}
+		
+		return renderer.renderJsTreeFeatureNodeContextMenu(context, obj, obj.eClass().getEStructuralFeature(id.substring(dashIdx+1)));
+	}
+				
 	/**
 	 * @return
 	 * @throws Exception

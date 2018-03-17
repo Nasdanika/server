@@ -407,6 +407,11 @@ public enum RenderAnnotation {
 		 * In the absence of this annotation containing many features are considered as tree features. 
 		 */
 		PATH_FEATURE("path-feature"),
+
+		/**
+		 * {@link EClass} annotation indicating whether children of this jstree node shall be loaded lazily in ajax load. 
+		 */
+		JSTREE_LAZY("jstree-lazy"),
 		
 		/**
 		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements

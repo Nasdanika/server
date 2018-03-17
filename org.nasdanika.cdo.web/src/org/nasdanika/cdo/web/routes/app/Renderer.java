@@ -103,7 +103,6 @@ import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Spinner;
-import org.nasdanika.html.FontAwesome.TextEditor;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
@@ -1049,7 +1048,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param obj
 	 * @return Object URI. This implementation returns object path if context is instanceof {@link HttpServletRequestContext} 
-	 * and ``null`` otherwise.
+	 * and ``null`` otherwise. Subtypes can override this method to, say, return a URL fragment for Single-Page Applications.
 	 * @throws Exception
 	 */
 	default String getObjectURI(C context, T obj) throws Exception {
@@ -2817,7 +2816,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				referrer = request.getHeader("referer");
 			}
 			if (referrer == null) {
-				referrer = ((HttpServletRequestContext) context).getObjectPath(obj)+"/"+INDEX_HTML;
+				referrer = getObjectURI(context, obj)+"/"+INDEX_HTML;
 			}
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
@@ -2858,7 +2857,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderRemoveIcon(C context) throws Exception {
-		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.trash_o).getTarget();
+		return getHTMLFactory(context).span().addClass("fas").addClass("fa-trash-alt");
 	}
 
 	/**
@@ -3092,7 +3091,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			leftPanelTree = "";
 			Renderer<C, EObject> rootRenderer = getRenderer(root);
 			if (rootRenderer != null) {
-				JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, obj);
+				JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, obj, false);
 				// Mark nodes as has-readable
 				rootNode.<Boolean>accept((node, childResults) -> {
 					
@@ -5598,17 +5597,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param obj
 	 * @param contextObject object to select in the tree
-	 * @param roots Objects which this context principal(s) have read access to.  
+	 * @param lazy If true take jstree-lazy annotation into account.  
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default JsTreeNode renderJsTreeNode(C context, T obj, EObject contextObject) throws Exception {
+	default JsTreeNode renderJsTreeNode(C context, T obj, EObject contextObject, boolean lazy) throws Exception {
 		if (obj instanceof CDOObject && ((CDOObject) obj).cdoID().isTemporary()) {
 			return null; // Not addressable.
 		}
 		
 		boolean readable = context.authorizeRead(obj, null, null);
+		String objID = null;
+		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
+			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
+		}
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		JsTreeNode ret = htmlFactory.jsTreeNode();
@@ -5616,10 +5619,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ret.setData("readable", readable);
 		ret.text(renderLabel(context, obj));		
 		ret.icon(getIcon(context, obj));
-		String objID = null;
-		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
-			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
-		}
 		ret.id(objID);		
 		ret.anchorAttribute("title", renderNamedElementLabel(context, obj.eClass()));
 		
@@ -5650,6 +5649,63 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			ret.anchorAttribute("style", "cursor:default");
 		}
 		
+		boolean isLazy = false;
+		if (lazy) {
+			String jsTreeLazyAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.JSTREE_LAZY);
+			isLazy = "true".equals(jsTreeLazyAnnotation);
+		}
+		
+		if (isLazy) {
+			if (hasJsTreeNodeChildren(context, obj)) {
+				ret.hasChildren();
+			}
+		} else {
+			ret.children().addAll(renderJsTreeNodeChildren(context, obj, contextObject, lazy));
+		}
+		
+		if (readable && obj != contextObject && EcoreUtil.isAncestor(obj, contextObject)) {
+			// Select ancestor of context object if context object is not in the tree.
+			ret.selected(ret.<Boolean>accept((node, childResults) -> {
+				// There is a closer ancestor
+				if (node.getData() != obj && node.getData() instanceof EObject && EcoreUtil.isAncestor((EObject) node.getData(), contextObject)) {
+					return false;
+				}
+				for (Boolean chr: childResults) {
+					if (!chr) {
+						return false;
+					}
+				}
+				return true;
+			}));
+		}		
+		
+		return ret;
+	}
+	
+	@SuppressWarnings("unchecked")
+	default List<JsTreeNode> renderJsTreeNodeChildren(C context, T obj, EObject contextObject, boolean lazy) throws Exception {
+		List<JsTreeNode> ret = new ArrayList<>();
+
+		boolean readable = context.authorizeRead(obj, null, null);
+		String objID = null;
+		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
+			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
+		}
+		String objectHome = getObjectURI(context, obj)+"/"+INDEX_HTML;
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+				
+		String contextFeatureName = null;
+		if (context instanceof HttpServletRequestContext) {
+			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			contextFeatureName = request.getParameter("context-feature");
+			if (contextFeatureName == null) {
+				Object cfa = request.getAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY);
+				if (cfa instanceof EStructuralFeature) {
+					contextFeatureName = ((EStructuralFeature) cfa).getName();
+				}
+			}
+		}
+				
 		Map<String,JsTreeNode> categories = new TreeMap<>();
 		List<EStructuralFeature> treeFeatures;
 		if (readable) {
@@ -5727,7 +5783,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				for (EObject element: (Collection<EObject>) obj.eGet(nodeFeature)) {
-					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
+					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject, lazy);
 				
 					if (elementNode != null) {					
 						JsTreeNode contextNode = featureNode;
@@ -5776,7 +5832,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else {
 				Object val = obj.eGet(nodeFeature);
 				if (val instanceof EObject) {
-					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject);
+					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject, lazy);
 					if (valNode != null) {
 						featureNode.children().add(valNode);
 					}
@@ -5785,13 +5841,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			if (!featureNode.children().isEmpty()) {
 				if (category == null) {
-					ret.children().add(featureNode);
+					ret.add(featureNode);
 				} else {
 					JsTreeNode categoryNode = categories.get(category);
 					if (categoryNode == null) {
 						categoryNode = htmlFactory.jsTreeNode();
 						categories.put(category, categoryNode);
-						ret.children().add(categoryNode);
+						ret.add(categoryNode);
 						categoryNode.icon(getRenderAnnotation(context, obj.eClass(), "category."+category+".icon"));
 						
 						String categoryLabel = getRenderAnnotation(context, obj.eClass(), "category."+category+".label"); 
@@ -5819,40 +5875,51 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (EStructuralFeature directFeature: directFeatures) {
 			if (directFeature.isMany()) {
 				for (EObject element: (Collection<EObject>) obj.eGet(directFeature)) {
-					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
+					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject, lazy);
 					if (elementNode != null) {
-						ret.children().add(elementNode);
+						ret.add(elementNode);
 					}					
 				}
 			} else {
 				Object val = obj.eGet(directFeature);
 				if (val instanceof EObject) {
-					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject);
+					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject, lazy);
 					if (valNode != null) {
-						ret.children().add(valNode);
+						ret.add(valNode);
+					}
+				}
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Returns true if the node has children. Makes a good enough guess, which may be false sometimes. As usual - override as needed.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default boolean hasJsTreeNodeChildren(C context, T obj) throws Exception {
+		if (context.authorizeRead(obj, null, null)) {
+			for (EStructuralFeature treeFeature: getTreeFeatures(context, obj)) {
+				if (obj.eIsSet(treeFeature)) {
+					return true;
+				}
+			}				
+		} else {
+			for (EStructuralFeature feature: obj.eClass().getEAllStructuralFeatures()) {
+				if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+					if (obj.eIsSet(feature)) {
+						return true;
 					}
 				}
 			}
 		}
 		
-		if (readable && obj != contextObject && EcoreUtil.isAncestor(obj, contextObject)) {
-			// Select ancestor of context object if context object is not in the tree.
-			ret.selected(ret.<Boolean>accept((node, childResults) -> {
-				// There is a closer ancestor
-				if (node.getData() != obj && node.getData() instanceof EObject && EcoreUtil.isAncestor((EObject) node.getData(), contextObject)) {
-					return false;
-				}
-				for (Boolean chr: childResults) {
-					if (!chr) {
-						return false;
-					}
-				}
-				return true;
-			}));
-		}		
-		
-		return ret;
+		return false;
 	}
+	
 	
 	/**
 	 * Renders jsTree context menu items for the object node. See https://www.jstree.com/api/#/?q=$.jstree.defaults.contextmenu&f=$.jstree.defaults.contextmenu.items for details
