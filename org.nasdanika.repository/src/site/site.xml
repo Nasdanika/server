@@ -6,14 +6,18 @@
   <body>
  
     <breadcrumbs>
-      <item name="Nasdanika" href="../site/index.html"/>
+      <item name="Nasdanika" href="../../site/index.html"/>
       <item name="Foundation Server" href="index.html"/>
     </breadcrumbs>
  
    <menu name="Main">
       <item name="Overview" href="index.html" />
       <item name="API Documentation" href="apidocs/index.html" />
-      <item name="Project information" href="project-info.html" />      
+   </menu>
+   
+   <menu name="Bundles">
+      <item name="Core" href="../org.nasdanika.core/index.html" />
+      <item name="Web" href="../org.nasdanika.web/index.html" />
    </menu>
 
    <menu name="Issues">

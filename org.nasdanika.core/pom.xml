@@ -10,4 +10,27 @@
   <packaging>eclipse-plugin</packaging>
   <name>Core</name>
   <description>Core classes and interfaces for contextual command execution.</description>  
+  
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-site-plugin</artifactId>
+			    <version>3.7.1</version>
+			    <configuration>
+			        <skip>false</skip>
+			        <skipDeploy>false</skipDeploy>
+			        <siteDirectory>${basedir}/site</siteDirectory>
+			    </configuration>
+			</plugin>				
+		</plugins>
+	</build>
+	<url>https://www.nasdanika.org/products/server/org.nasdanika.core/</url>
+	<distributionManagement>
+		<site>
+			<id>nasdanika-org</id>
+			<url>ftp://${env.FTP_SERVER}/server/org.nasdanika.core</url>
+		</site>
+	</distributionManagement>	
+  
 </project>

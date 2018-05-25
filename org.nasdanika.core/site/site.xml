@@ -1,0 +1,38 @@
+<project>
+ 
+  <publishDate position="right"/>
+  <version position="right"/>
+  
+  <body>
+ 
+    <breadcrumbs>
+      <item name="Nasdanika" href="../../site/index.html"/>
+      <item name="Foundation Server" href="../org.nasdanika.repository/index.html"/>
+      <item name="Core" href="index.html"/>
+    </breadcrumbs>
+ 
+   <menu name="Main">
+      <item name="Overview" href="index.html" />
+      <item name="API Documentation" href="apidocs/index.html" />
+      <item name="Project information" href="project-info.html" />      
+   </menu>
+
+   <footer><![CDATA[All rights reserved.]]></footer>
+ 
+  </body>    
+ 
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.7</version>
+  </skin>
+  
+  <custom>
+    <fluidoSkin>
+      <googleSearch>
+        <sitesearch>https://www.nasdanika.org/products/server/org.nasdanika.core</sitesearch>
+      </googleSearch>      
+    </fluidoSkin>
+  </custom>
+ 
+</project>
