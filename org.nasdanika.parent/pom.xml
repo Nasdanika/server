@@ -14,7 +14,7 @@
 	</prerequisites>
 
 	<properties>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 	</properties>
 
 	<repositories>
@@ -73,6 +73,14 @@
 		</repository>
 	</repositories>
 	<build>
+		<extensions>
+			<!-- Enabling the use of FTP -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>3.0.0</version>
+			</extension>
+		</extensions>
 		<sourceDirectory>src</sourceDirectory>
 		<!-- 
 		<pluginManagement>
@@ -81,11 +89,38 @@
 					<groupId>org.eclipse.tycho.extras</groupId>
 					<artifactId>tycho-document-bundle-plugin</artifactId>
 					<version>${tycho-version}</version>
+					<configuration>
+						<javadocOptions>
+							<ignoreError>true</ignoreError>
+							
+				        	<doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+				        	<docletArtifacts>
+					        	<docletArtifact>
+					         		<groupId>ch.raffael.pegdown-doclet</groupId>
+					         		<artifactId>pegdown-doclet</artifactId>
+					        		<version>1.1</version>
+					        	</docletArtifact>
+				        	</docletArtifacts>
+						    <includes>
+						       <include>org.nasdanika.*</include>
+						    </includes>				        	
+						</javadocOptions>					
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		-->
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-site-plugin</artifactId>
+			    <version>3.7.1</version>
+			    <configuration>
+			        <skip>true</skip>
+			        <skipDeploy>true</skipDeploy>
+			    </configuration>
+			</plugin>		
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -104,12 +139,14 @@
 					
 					<links>
 						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
-						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>		
-						<link>http://help.eclipse.org/neon/topic/org.eclipse.platform.doc.isv/reference/api</link>
+						<link>http://help.eclipse.org/oxygen/topic/org.eclipse.emf.cdo.doc/javadoc</link>		
+						<link>http://help.eclipse.org/oxygen/topic/org.eclipse.platform.doc.isv/reference/api</link>
 						<link>http://stleary.github.io/JSON-java</link>			
 						<link>https://osgi.org/javadoc/r4v42/</link>
 						<link>http://seleniumhq.github.io/selenium/docs/api/java/</link>
-						<link>http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs</link>
+						<link>https://www.nasdanika.org/products/html/apidocs</link>
+						<link>http://www.eclipse.org/jetty/javadoc/9.4.5.v20170502/</link>
+						<link>https://docs.oracle.com/javaee/8/api/</link>
 					</links>
 				</configuration>				
 			</plugin>
@@ -207,7 +244,7 @@
 	</modules>
 	<name>Nasdanika Foundation Server</name>
 	<!-- For resolution of JavaDoc between modules -->
-	<url>http://www.nasdanika.org/server/apidocs/parent/</url>
+	<url>https://www.nasdanika.org/products/server/org.nasdanika.parent/</url>
 	<organization>
 		<name>Nasdanika LLC</name>
 		<url>http://www.nasdanika.org</url>
