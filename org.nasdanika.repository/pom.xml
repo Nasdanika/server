@@ -72,7 +72,10 @@
 							<resources>
 								<resource>
 									<directory>${basedir}/target</directory>
-									<includes>repository/**</includes>
+									<includes>
+										<include>repository/**</include>
+										<include>org.nasdanika.repository-*.zip</include>
+									</includes>
 									<filtering>false</filtering>
 								</resource>
 							</resources>

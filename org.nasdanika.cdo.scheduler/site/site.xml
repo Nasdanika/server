@@ -8,7 +8,7 @@
     <breadcrumbs>
       <item name="Nasdanika" href="../../site/index.html"/>
       <item name="Foundation Server" href="../org.nasdanika.repository/index.html"/>
-      <item name="Web" href="index.html"/>
+      <item name="CDO Scheduler" href="index.html"/>
     </breadcrumbs>
  
    <menu name="Main">
@@ -30,7 +30,7 @@
   <custom>
     <fluidoSkin>
       <googleSearch>
-        <sitesearch>https://www.nasdanika.org/products/server/org.nasdanika.web</sitesearch>
+        <sitesearch>https://www.nasdanika.org/products/server/org.nasdanika.cdo.scheduler</sitesearch>
       </googleSearch>      
     </fluidoSkin>
   </custom>

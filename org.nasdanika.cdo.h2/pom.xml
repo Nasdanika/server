@@ -8,4 +8,26 @@
   	<version>1.1.0-SNAPSHOT</version>
   	<relativePath>../org.nasdanika.parent</relativePath>
   </parent>
+  	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-site-plugin</artifactId>
+			    <version>3.7.1</version>
+			    <configuration>
+			        <skip>false</skip>
+			        <skipDeploy>false</skipDeploy>
+			        <siteDirectory>${basedir}/site</siteDirectory>
+			    </configuration>
+			</plugin>				
+		</plugins>
+	</build>
+	<url>https://www.nasdanika.org/products/server/${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nasdanika-org</id>
+			<url>ftp://${env.FTP_SERVER}/server/${project.artifactId}</url>
+		</site>
+	</distributionManagement>	
 </project>
