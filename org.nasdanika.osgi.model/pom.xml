@@ -2,6 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>org.nasdanika.osgi.model</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <name>Nasdanika OSGi Model</name>
   <parent>
   	<groupId>org.nasdanika</groupId>
   	<artifactId>org.nasdanika.parent</artifactId>

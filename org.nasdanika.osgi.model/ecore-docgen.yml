@@ -1,0 +1,14 @@
+models:
+  - model/model.genmodel
+  
+output:
+  site: /org.nasdanika.osgi.model/site/resources/modeldoc   
+
+apidocs:
+  - https://www.nasdanika.org/products/server/org.nasdanika.osgi.model/apidocs/
+  - http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/
+  - https://docs.oracle.com/javase/8/docs/api/
+  - https://osgi.org/javadoc/r6/residential/
+  - https://osgi.org/javadoc/r6/core/
+  
+  

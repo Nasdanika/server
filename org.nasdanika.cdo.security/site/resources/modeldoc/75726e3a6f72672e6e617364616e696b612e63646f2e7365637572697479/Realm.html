@@ -1,0 +1,566 @@
+
+<script>document.title="EClass Realm";</script>
+<h2>
+<img src="resources/images/EClass.gif" style="margin-right:5px"/><I>Realm</I></h2>
+<div style="margin-bottom:5px;font-family:monospace"><a href="https://www.nasdanika.org/products/server/org.nasdanika.cdo.security/apidocs/index.html?org/nasdanika/cdo/security/Realm.html">org.nasdanika.cdo.security.Realm</a></div>
+<div>
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#nsd_d8_tab_0" data-toggle="tab">Documentation</a>
+    </li>
+    <li>
+      <a href="#nsd_d8_tab_1" data-toggle="tab">Diagram</a>
+    </li>
+    <li>
+      <a href="#nsd_d8_tab_2" data-toggle="tab">
+<img src="resources/images/EReference.gif" style="margin-right:5px"/> References</a>
+    </li>
+    <li>
+      <a href="#nsd_d8_tab_3" data-toggle="tab">
+<img src="resources/images/EOperation.gif" style="margin-right:5px"/> Operations</a>
+    </li>
+    <li>
+      <a href="#nsd_d8_tab_4" data-toggle="tab">Subtypes</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div id="nsd_d8_tab_0" class="tab-pane active">
+      <div style="margin-top:10px;margin-bottom:10px" class="markdown-body"><p>Realm establishes associations between users and actions on model objects which users are allowed to perform. There is no Role class/interface in the domain. A grantable actions is Role.</p>
+<p>Typically the root of the application model would implement this interface.</p></div></div>
+    <div id="nsd_d8_tab_1" class="tab-pane">
+      <img src="75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Realm.png"/>
+    </div>
+    <div id="nsd_d8_tab_2" class="tab-pane">
+      <div id="nsd_d9_accordion" role="tablist" class="panel-group">
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_da_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_d9_accordion" href="#nsd_da_collapse_collapse" aria-expanded="false" aria-controls="nsd_da_collapse_collapse"><b>administrators</b> : User - <I>Administrators have all permissions. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_da_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_da_collapse_panel_body" class="panel-body"><p>Administrators have all permissions. If administrators collection is empty, then any user is treated as a superuser. This functionality allows to configure the system after installation and then secure it by adding administrators.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/User.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>User</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>*</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Default value</th>
+                  <td>
+                    <div style="white-space:pre;font-family:monospace"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Changeable</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Container</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Containment</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Derived</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">EKeys</th>
+                  <td>
+                    <ol></ol>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Opposite</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Ordered</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Resolve proxies</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Transient</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unsettable</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Volatile</th>
+                  <td></td>
+                </tr>
+              </table>
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">Annotation org.nasdanika.cdo.web.render</h3>
+  </div>
+  <table class="table table-bordered">
+    <tr>
+      <td>view</td>
+      <td style="white-space:pre-wrap;font-family:monospace">list</td>
+    </tr>
+  </table></div></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_db_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_d9_accordion" href="#nsd_db_collapse_collapse" aria-expanded="false" aria-controls="nsd_db_collapse_collapse"><b>everyone</b> : Principal - <I>If this reference is set then all authenticated users implicitly inherit permissions from the everyone principal.</I></a>
+            </h4>
+          </div>
+          <div id="nsd_db_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_db_collapse_panel_body" class="panel-body"><p>If this reference is set then all authenticated users implicitly inherit permissions from the <code>everyone</code> principal.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>Principal</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>0..1</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Default value</th>
+                  <td>
+                    <div style="white-space:pre;font-family:monospace"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Changeable</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Container</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Containment</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Derived</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">EKeys</th>
+                  <td>
+                    <ol></ol>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Opposite</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Ordered</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Resolve proxies</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Transient</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unsettable</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Volatile</th>
+                  <td></td>
+                </tr>
+              </table></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_dc_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_d9_accordion" href="#nsd_dc_collapse_collapse" aria-expanded="false" aria-controls="nsd_dc_collapse_collapse"><b>guest</b> : Principal - <I>Unauthenticated principal.</I></a>
+            </h4>
+          </div>
+          <div id="nsd_dc_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_dc_collapse_panel_body" class="panel-body"><p>Unauthenticated principal.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>Principal</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>0..1</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Default value</th>
+                  <td>
+                    <div style="white-space:pre;font-family:monospace"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Changeable</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Container</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Containment</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Derived</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">EKeys</th>
+                  <td>
+                    <ol></ol>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Opposite</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Ordered</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Resolve proxies</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Transient</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unsettable</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Volatile</th>
+                  <td></td>
+                </tr>
+              </table></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_dd_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_d9_accordion" href="#nsd_dd_collapse_collapse" aria-expanded="false" aria-controls="nsd_dd_collapse_collapse"><b>packages</b> : Package - <I>In a security realm principals are granted permissios to perform actions on protected objects. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_dd_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_dd_collapse_panel_body" class="panel-body"><p>In a security realm principals are granted permissios to perform actions on protected objects. Actions are associated with classed defined in packages.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Package.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>Package</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>*</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Default value</th>
+                  <td>
+                    <div style="white-space:pre;font-family:monospace"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Changeable</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Container</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Containment</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Derived</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">EKeys</th>
+                  <td>
+                    <ol></ol>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Opposite</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Ordered</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Resolve proxies</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Transient</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unsettable</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Volatile</th>
+                  <td></td>
+                </tr>
+              </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="nsd_d8_tab_3" class="tab-pane">
+      <div id="nsd_de_accordion" role="tablist" class="panel-group">
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_df_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_de_accordion" href="#nsd_df_collapse_collapse" aria-expanded="false" aria-controls="nsd_df_collapse_collapse"><b>authenticate</b> : Principal - <I>Authenticates provided credentials, e.g. user login and password pair. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_df_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_df_collapse_panel_body" class="panel-body"><p>Authenticates provided credentials, e.g. user login and password pair. Returns a list of principals (subject) associated with the provided credentials.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>Principal</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>*</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Exceptions</th>
+                  <td>
+                    <ul></ul>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+              </table>
+              <h3>Parameters</h3>
+              <h4>credentials : 
+<a href="#router/doc-content/687474703a2f2f7777772e65636c697073652e6f72672f656d662f323030322f45636f7265/EJavaObject.html">
+<img src="resources/images/EDataType.gif" style="margin-right:5px"/>EJavaObject</a> 0..1</h4></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_dg_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_de_accordion" href="#nsd_dg_collapse_collapse" aria-expanded="false" aria-controls="nsd_dg_collapse_collapse"><b>clearPermissions</b> : void - <I>Removes permissions associated with the target object from all principals in the realm. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_dg_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_dg_collapse_panel_body" class="panel-body"><p>Removes permissions associated with the target object from all principals in the realm. This method shall be invoked before deleting an object.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>0..1</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Exceptions</th>
+                  <td>
+                    <ul></ul>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+              </table>
+              <h3>Parameters</h3>
+              <h4>target : 
+<a href="#router/doc-content/687474703a2f2f7777772e65636c697073652e6f72672f656d662f323030322f45636f7265/EObject.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>EObject</a> 0..1</h4>
+              <div style="margin-top:10px;margin-bottom:20px" class="markdown-body"><p>Target object.</p></div></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_dh_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_de_accordion" href="#nsd_dh_collapse_collapse" aria-expanded="false" aria-controls="nsd_dh_collapse_collapse"><b>getAllUsers</b> : User - <I>Realm does not have a containment reference for users, subclasses may have one or more user containment references, direct or through contained objects. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_dh_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_dh_collapse_panel_body" class="panel-body"><p>Realm does not have a containment reference for users, subclasses may have one or more user containment references, direct or through contained objects.</p>
+<p>This method returns all users defined in the realm.</p>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/User.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>User</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>*</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Exceptions</th>
+                  <td>
+                    <ul></ul>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+              </table></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div role="tab" id="nsd_di_collapse_heading" class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#nsd_de_accordion" href="#nsd_di_collapse_collapse" aria-expanded="false" aria-controls="nsd_di_collapse_collapse"><b>isAdministrator</b> : EBoolean - <I>Returns true if principal is administrator. </I></a>
+            </h4>
+          </div>
+          <div id="nsd_di_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_di_collapse_panel_body" class="panel-body"><p>Returns true if principal is administrator. The default implementation returns true if:</p>
+<ul>
+  <li>There are no users in the realm and the principal is guest.</li>
+  <li>If there are users in the realm, the principal is not guest, and is part of the administrators reference or if the administrators reference is empty.</li>
+</ul>
+              <table class="table table-bordered">
+                <tr>
+                  <th style="align:left">Type</th>
+                  <td>
+<a href="#router/doc-content/687474703a2f2f7777772e65636c697073652e6f72672f656d662f323030322f45636f7265/EBoolean.html">
+<img src="resources/images/EDataType.gif" style="margin-right:5px"/>EBoolean</a></td>
+                </tr>
+                <tr>
+                  <th style="align:left">Cardinality</th>
+                  <td>0..1</td>
+                </tr>
+                <tr>
+                  <th style="align:left">Exceptions</th>
+                  <td>
+                    <ul></ul>
+                  </td>
+                </tr>
+                <tr>
+                  <th style="align:left">Unique</th>
+                  <td>
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </td>
+                </tr>
+              </table>
+              <h3>Parameters</h3>
+              <h4>principal : 
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html">
+<img src="resources/images/EClass.gif" style="margin-right:5px"/>Principal</a> 0..1</h4></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="nsd_d8_tab_4" class="tab-pane">
+      <table class="table table-bordered">
+        <tr class="info">
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>
+<a href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/LoginPasswordRealm.html">LoginPasswordRealm</a></td>
+          <td>Realm which supports user authentication with user name and password.</td>
+        </tr>
+      </table>
+    </div></div>
+</div>

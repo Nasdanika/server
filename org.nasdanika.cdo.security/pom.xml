@@ -8,7 +8,7 @@
   </parent>
   <artifactId>org.nasdanika.cdo.security</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>CDO Security</name>
+  <name>Nasdanika CDO Security</name>
   <description>Application level authentication and authorization for objects in CDO repositories.</description>  
 	<build>
 		<plugins>

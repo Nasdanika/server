@@ -31,4 +31,5 @@
 		</site>
 	</distributionManagement>
   
+	<name>Nasdanika CDO</name>
 </project>

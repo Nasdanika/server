@@ -1,0 +1,13 @@
+models:
+  - model/security.genmodel
+  
+output:
+  site: /org.nasdanika.cdo.security/site/resources/modeldoc   
+
+apidocs:
+  - https://www.nasdanika.org/products/server/org.nasdanika.cdo.security/apidocs/
+  - https://www.nasdanika.org/products/server/org.nasdanika.core/apidocs/
+  - http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/
+  - https://docs.oracle.com/javase/8/docs/api/
+  
+  

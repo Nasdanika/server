@@ -8,7 +8,7 @@
   </parent>
   <artifactId>org.nasdanika.provisioning</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>Core</name>
+  <name>Provisioning</name>
   <description>Provisioning-related classes and components.</description>  
 	<build>
 		<plugins>
