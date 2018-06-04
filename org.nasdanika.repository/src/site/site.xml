@@ -29,6 +29,11 @@
       <item name="Web" href="../org.nasdanika.cdo.web/index.html" />
       <item name="Web Doc" href="../org.nasdanika.cdo.web.doc/index.html" />
    </menu>
+   
+   <menu name="Examples">
+      <item name="Bank" href="../../bank/index.html" />
+      <item name="Nature" href="../../nature/index.html" />
+   </menu>
 
    <menu name="Issues">
       <item name="Roadmap" href="../../../mantis/roadmap_page.php?project_id=2" />
