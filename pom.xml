@@ -19,21 +19,20 @@
 			        <skipDeploy>true</skipDeploy>
 			    </configuration>
 			</plugin>		
-
+    <plugins>
 			<plugin>
 				<!-- NOTE: We don't need a groupId specification because the group is org.apache.maven.plugins 
 					...which is assumed by default. -->
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.1.0</version>
 				<configuration>
-					<outputDirectory>${project.build.directory}/site</outputDirectory>
+					<outputDirectory>org.nasdanika.repository/target/site</outputDirectory>
 					<formats>zip</formats>
-					<finalName>${project.artifactId}</finalName>
+					<finalName>server</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
-						<descriptorRef>project</descriptorRef>
-		
-					</descriptorRefs>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
 				</configuration>
 			</plugin>			
 				
