@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xmi:id="_YR96IOjyEeS87bbc76ea5Q" version="8.1.1">
-  <models xmi:type="ecore:EPackage" href="model/sca.ecore#/"/>
-  <models xmi:type="ecore:EPackage" href="http://www.eclipse.org/emf/2002/Ecore#/"/>
-  <models xmi:type="genmodel:GenModel" href="model/sca.genmodel#/"/>
-</viewpoint:DAnalysis>
