@@ -14,6 +14,7 @@
       <useDefaultExcludes>false</useDefaultExcludes>
       <excludes>
         <exclude>*/target/**</exclude>
+        <exclude>*.jar</exclude>
       </excludes>
     </fileSet>
   </fileSets>
