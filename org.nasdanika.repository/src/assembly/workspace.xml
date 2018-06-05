@@ -15,6 +15,9 @@
       <excludes>
         <exclude>*/target/**</exclude>
         <exclude>*.jar</exclude>
+        <exclude>.git/**</exclude>
+        <exclude>.circleci/**</exclude>
+        <exclude>ftp-clean.xml</exclude>
       </excludes>
     </fileSet>
   </fileSets>
