@@ -120,6 +120,15 @@
 			        <skipDeploy>true</skipDeploy>
 			    </configuration>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+				    <skipAssembly>true</skipAssembly>
+				</configuration>
+			</plugin>			
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
