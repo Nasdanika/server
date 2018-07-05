@@ -27,7 +27,6 @@ public class CDOObjectModuleLazyFeatureFacadeDefinitionGenerator implements org.
   protected final String TEXT_12 = "(newValue) {" + NL + "\tdata.";
   protected final String TEXT_13 = ".value = newValue;" + NL + "}";
   protected final String TEXT_14 = NL;
-  protected final String TEXT_15 = NL;
 
 public String generate(Object... args) throws Exception
   {
@@ -64,7 +63,7 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_13);
      } 
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_14);
     return stringBuffer.toString();
   }
 }

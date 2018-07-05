@@ -21,23 +21,23 @@
 	
 		<repository>
 			<id>cdo</id>
-			<url>http://download.eclipse.org/modeling/emf/cdo/drops/R20170614-0227</url>
+			<url>http://download.eclipse.org/modeling/emf/cdo/drops/R20180613-0111</url>
 			<layout>p2</layout>
 		</repository>
 		
 		<repository>
 			<id>oxygen</id>
-			<url>http://download.eclipse.org/releases/oxygen</url>
+			<url>http://download.eclipse.org/releases/photon</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.8.v20171121/</url>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -153,7 +153,7 @@
 						<link>https://osgi.org/javadoc/r4v42/</link>
 						<link>http://seleniumhq.github.io/selenium/docs/api/java/</link>
 						<link>https://www.nasdanika.org/products/html/apidocs</link>
-						<link>http://www.eclipse.org/jetty/javadoc/9.4.5.v20170502/</link>
+						<link>http://www.eclipse.org/jetty/javadoc/9.4.11.v20180605/</link>
 						<link>https://docs.oracle.com/javaee/8/api/</link>
 					</links>
 				</configuration>				
