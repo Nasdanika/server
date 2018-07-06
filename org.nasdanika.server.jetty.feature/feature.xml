@@ -152,13 +152,6 @@
          unpack="false"/>
 
    <plugin
-         id="com.github.dblock.waffle.jetty"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.aries.spifly.dynamic.bundle"
          download-size="0"
          install-size="0"
@@ -202,6 +195,20 @@
 
    <plugin
          id="org.eclipse.jetty.client.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.jetty.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.jetty.xml.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
