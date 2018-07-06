@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="122">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="122">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.api" version="1.7.6"/>
@@ -12,44 +11,33 @@
 <repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="com.github.dblock.waffle.jetty" version="1.7.3"/>
-<unit id="com.github.dblock.waffle.jna" version="1.7.3"/>
-<unit id="com.google.guava" version="18.0.0"/>
-<unit id="com.sun.jna" version="4.1.0"/>
-<unit id="com.sun.jna.platform" version="4.1.0"/>
-<unit id="json" version="20160810.0.0"/>
-<unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.8"/>
-<unit id="org.apache.aries.spifly.org.apache.aries.spifly.core-internal" version="1.0.8"/>
-<unit id="org.apache.aries.spifly.org.apache.aries.spifly.weaver-internal" version="1.0.8"/>
-<unit id="org.apache.aries.util" version="1.0.0"/>
-<unit id="org.apache.commons.codec" version="1.10.0"/>
-<unit id="org.apache.commons.lang3" version="3.3.2"/>
-<unit id="org.codehaus.janino" version="3.0.6"/>
-<unit id="org.codehaus.janino.commons-compiler" version="3.0.6"/>
-<unit id="org.jsoup" version="1.9.2"/>
-<unit id="org.mozilla.rhino" version="1.7.7.1"/>
-<unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
-<unit id="org.yaml.snakeyaml" version="1.17.0"/>
-<unit id="slf4j.simple" version="1.7.6"/>
+<unit id="json" version="20170516.0.0"/>
+<unit id="org.jsoup" version="1.10.3"/>
+<unit id="org.mozilla.rhino" version="1.7.7.2"/>
+<unit id="org.yaml.snakeyaml" version="1.18.0"/>
 <repository location="http://www.nasdanika.org/maven-osgi"/>
+	<unit id="org.mozilla.rhino.source" version="1.7.7.2"/>
+	<unit id="org.apache.commons.codec" version="1.10.0"/>
+	<unit id="org.apache.commons.jxpath" version="1.3.0"/>
+	<unit id="org.apache.commons.jxpath.source" version="1.3.0"/>
+	<unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.8"/>
+	<unit id="org.apache.aries.util" version="1.0.0"/>
+	<unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
+	<unit id="org.objenesis.source" version="2.1.0"/>
+	<unit id="org.yaml.snakeyaml.source" version="1.18.0"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.4.5.201705032012"/>
-<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.4.5.201705032012"/>
-<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.5.v20170502/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.emf.cdo.epp.feature.group" version="4.6.0.v20170602-1611"/>
-<unit id="org.eclipse.emf.cdo.sdk.feature.group" version="4.6.0.v20170602-1611"/>
-<repository location="http://download.eclipse.org/releases/oxygen"/>
+<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.4.10.201805070144"/>
+<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.4.10.201805070144"/>
+<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="javax.transaction" version="1.1.1.v201105210645"/>
 <unit id="javax.transaction.source" version="1.1.1.v201105210645"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201707051709"/>
+<unit id="org.nasdanika.html.feature.feature.group" version="1.2.0.201805260058"/>
 <repository location="http://www.nasdanika.org/products/html/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
