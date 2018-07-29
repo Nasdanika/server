@@ -58,12 +58,14 @@ public class PlantUmlMarkdownPreProcessor implements MarkdownPreProcessor {
 			SourceStringReader reader = new SourceStringReader(content);
 			try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 				// Write the first image to "os"
-				reader.generateImage(os, new FileFormatOption(FileFormat.SVG));
+				reader.generateImage(os, new FileFormatOption(FileFormat.SVG)); // To get CMap use .outputImage and retrieve the map from returned DiagramDescription
 				os.close();
 				
 				int startTagIdx = content.indexOf(START_TAG);
 				String bareSpec = content.substring(startTagIdx+START_TAG.length(), content.lastIndexOf(END_TAG));
 				String escapedBareSpec = StringEscapeUtils.escapeHtml4(bareSpec).trim();
+				
+				// CMap - reader.getCMapData(option.getImageIndex(), option.getFileFormatOption()); Look at ImageData too.
 	
 				// The XML is stored into svg
 				return 
