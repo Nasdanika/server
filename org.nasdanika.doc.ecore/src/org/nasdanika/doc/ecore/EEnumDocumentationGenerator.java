@@ -18,7 +18,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 	}
 
 	@Override
-	public String generateDocumentation() {		
+	public String generateDocumentation(String diagramCMap) {		
 		HTMLFactory htmlFactory = getHtmlFactory();		
 		String enumIcon = eClassifierIcon(getModelElement());
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EEnum "+getModelElement().getName()));

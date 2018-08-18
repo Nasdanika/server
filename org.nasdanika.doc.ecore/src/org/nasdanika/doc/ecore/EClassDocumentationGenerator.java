@@ -39,7 +39,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	 * @return
 	 * @throws IOException 
 	 */
-	public void generateDiagram(
+	public String generateDiagram(
 			boolean leftToRightDirection, 
 			String width, 
 			int depth, 
@@ -49,7 +49,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			OutputStream out) throws IOException {
 		
 		StringBuilder sb = new StringBuilder();
-		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb) {
+		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb, this::getEClassifierLocation) {
 			
 			@Override
 			protected Collection<EClass> getSubTypes(EClass eClass) {
@@ -86,11 +86,11 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		
 		gen.appendEndUml();
 		SourceStringReader reader = new SourceStringReader(sb.toString());
-		reader.generateImage(out);
+		return reader.generateDiagramDescription(out).getCmapData();
 	}
 		
 	@Override
-	public String generateDocumentation() {
+	public String generateDocumentation(String diagramCMap) {
 		HTMLFactory htmlFactory = getHtmlFactory();
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EClass "+getModelElement().getName()));
 		ret.content(htmlFactory.tag(TagName.h2, eClassifierIcon(getModelElement()), getModelElement().isAbstract() ? "<I>"+getModelElement().getName()+"</I>" : getModelElement().getName()));
@@ -108,7 +108,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	
 		Tabs tabs = htmlFactory.tabs();
 		ret.content(tabs);
-		tabs(tabs);
+		tabs(tabs, diagramCMap);
 		return ret.toString();		
 	}
 
@@ -472,9 +472,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}		
 	}
 
-	protected void tabs(Tabs tabs) {
+	protected void tabs(Tabs tabs, String diagramCMap) {
 		documentationTab(tabs);
-		diagramTab(tabs);
+		diagramTab(tabs, diagramCMap);
 		attributesTab(tabs);
 		referencesTab(tabs);
 		operationsTab(tabs);
@@ -482,9 +482,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		subTypesTab(tabs);
 	}
 
-	protected void diagramTab(Tabs tabs) {
+	protected void diagramTab(Tabs tabs, String diagramCMap) {
 		HTMLFactory htmlFactory = getHtmlFactory();
-		tabs.item("Diagram", htmlFactory.fragment(htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation())));
+		tabs.item("Diagram", htmlFactory.fragment(htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation()).attribute("usemap", "#plantuml_map"), diagramCMap));
 	}
 
 	protected String getDiagramImageLocation() {

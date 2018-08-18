@@ -14,7 +14,7 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 	}
 
 	@Override
-	public String generateDocumentation() {		
+	public String generateDocumentation(String diagramCMap) {		
 		HTMLFactory htmlFactory = getHtmlFactory();		
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EDataType "+getModelElement().getName()));
 		ret.content(htmlFactory.tag(TagName.h2, eClassifierIcon(getModelElement()), getModelElement().getName()));

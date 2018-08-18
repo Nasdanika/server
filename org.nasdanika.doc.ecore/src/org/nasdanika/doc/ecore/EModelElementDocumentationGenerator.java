@@ -255,6 +255,10 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		}
 		return "../"+getNamedElementFileName(ePackage)+"/";
 	}
+	
+	protected String getEClassifierLocation(EClassifier eClassifier) {
+		return getEPackageLocation(eClassifier.getEPackage())+getNamedElementFileName(eClassifier)+".html";
+	}
 		
 	protected String eClassifierLink(EClassifier eClassifier, boolean withIcon) {
 		if (eClassifier==null) {
@@ -265,8 +269,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 			// Strange, but seems to be a case sometimes.
 			return (eClassifierIcon == null ? "" : eClassifierIcon)+" "+eClassifier.getName();
 		}
-		String packageLocation = getEPackageLocation(eClassifier.getEPackage()); 
-		return getHtmlFactory().link(packageLocation+getNamedElementFileName(eClassifier)+".html", eClassifierIcon, eClassifier.getName()).toString();		
+		return getHtmlFactory().link(getEClassifierLocation(eClassifier), eClassifierIcon, eClassifier.getName()).toString();		
 	}
 	
 	/**
@@ -294,7 +297,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
 	
-	public abstract String generateDocumentation();
+	public abstract String generateDocumentation(String diagramCMap);
 	
 	/**
 	 * In situations where classes referencing this class are known this method can be overridden. 

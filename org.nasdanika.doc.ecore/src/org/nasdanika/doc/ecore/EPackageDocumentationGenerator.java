@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
@@ -34,10 +35,10 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	/**
 	 * Generates PNG diagram.
-	 * @return
+	 * @return Image map for the diagram
 	 * @throws IOException 
 	 */
-	public void generateDiagram(
+	public String generateDiagram(
 			boolean leftToRightDirection, 
 			String width, 
 			int depth, 
@@ -47,7 +48,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			OutputStream out) throws IOException {
 		
 		StringBuilder sb = new StringBuilder();
-		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb) {
+		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb, this::getEClassifierLocation) {
 			
 			@Override
 			protected Collection<EClass> getSubTypes(EClass eClass) {
@@ -87,7 +88,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		
 		gen.appendEndUml();
 		SourceStringReader reader = new SourceStringReader(sb.toString());
-		reader.generateImage(out);
+		return reader.generateDiagramDescription(out).getCmapData();
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 	}
 
 	@Override
-	public String generateDocumentation() {
+	public String generateDocumentation(String diagramCMap) {
 		HTMLFactory htmlFactory = getHtmlFactory();
 		
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EPackage "+getModelElement().getName()));
@@ -117,7 +118,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		Tabs tabs = htmlFactory.tabs();
 		ret.content(tabs);		
 		
-		tabs(tabs);
+		tabs(tabs, diagramCMap);
 		
 		return ret.toString();				
 	}
@@ -153,17 +154,17 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				.style().margin().right("5px");
 	}			
 	
-	protected void tabs(Tabs tabs) {
+	protected void tabs(Tabs tabs, String diagramCMap) {
 		documentationTab(tabs);		
-		diagramTab(tabs);
+		diagramTab(tabs, diagramCMap);
 		subPackagesTab(tabs);		
 		eClassifiersTab(tabs);	
 	}
 
-	protected void diagramTab(Tabs tabs) {
+	protected void diagramTab(Tabs tabs, String diagramCMap) {
 		HTMLFactory htmlFactory = getHtmlFactory();
-		Tag diagramImage = htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation());
-		tabs.item("Diagram", htmlFactory.fragment(diagramImage));
+		Tag diagramImage = htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation()).attribute("usemap", "#plantuml_map");
+		tabs.item("Diagram", htmlFactory.fragment(diagramImage, diagramCMap));
 	}
 
 	protected String getDiagramImageLocation() {
@@ -172,7 +173,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	protected void eClassifiersTab(Tabs tabs) {		
 		HTMLFactory htmlFactory = getHtmlFactory();
-		String packagePath = getEPackageLocation(getModelElement());
+//		String packagePath = getEPackageLocation(getModelElement());
 		List<EClassifier> pClassifiers = new ArrayList<>(getModelElement().getEClassifiers());
 		Collections.sort(pClassifiers, new Comparator<EClassifier>() {
 
