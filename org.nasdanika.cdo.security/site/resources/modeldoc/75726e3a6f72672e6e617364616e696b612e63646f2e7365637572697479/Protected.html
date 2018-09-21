@@ -6,36 +6,39 @@
 <div>
   <ul class="nav nav-tabs">
     <li class="active">
-      <a href="#nsd_cn_tab_0" data-toggle="tab">Documentation</a>
+      <a href="#nsd_qq_tab_0" data-toggle="tab">Documentation</a>
     </li>
     <li>
-      <a href="#nsd_cn_tab_1" data-toggle="tab">Diagram</a>
+      <a href="#nsd_qq_tab_1" data-toggle="tab">Diagram</a>
     </li>
     <li>
-      <a href="#nsd_cn_tab_2" data-toggle="tab">
+      <a href="#nsd_qq_tab_2" data-toggle="tab">
 <img src="resources/images/EReference.gif" style="margin-right:5px"/> References</a>
     </li>
     <li>
-      <a href="#nsd_cn_tab_3" data-toggle="tab">
+      <a href="#nsd_qq_tab_3" data-toggle="tab">
 <img src="resources/images/EOperation.gif" style="margin-right:5px"/> Operations</a>
     </li>
   </ul>
   <div class="tab-content">
-    <div id="nsd_cn_tab_0" class="tab-pane active">
+    <div id="nsd_qq_tab_0" class="tab-pane active">
       <div style="margin-top:10px;margin-bottom:10px" class="markdown-body"><p>Classes extending this interface maintain a list of permissions referencing principals.</p></div></div>
-    <div id="nsd_cn_tab_1" class="tab-pane">
-      <img src="75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Protected.png"/>
-    </div>
-    <div id="nsd_cn_tab_2" class="tab-pane">
-      <div id="nsd_co_accordion" role="tablist" class="panel-group">
+    <div id="nsd_qq_tab_1" class="tab-pane">
+      <img src="75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Protected.png" usemap="#plantuml_map"/><map id="plantuml_map" name="plantuml_map">
+<area shape="rect" id="id1" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/ProtectedPermission.html" title="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/ProtectedPermission.html" alt="" coords="163,214,473,275"/>
+<area shape="rect" id="id2" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Protected.html" title="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Protected.html" alt="" coords="38,60,597,135"/>
+</map>
+</div>
+    <div id="nsd_qq_tab_2" class="tab-pane">
+      <div id="nsd_qr_accordion" role="tablist" class="panel-group">
         <div class="panel panel-default">
-          <div role="tab" id="nsd_cp_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_qs_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_co_accordion" href="#nsd_cp_collapse_collapse" aria-expanded="false" aria-controls="nsd_cp_collapse_collapse"><b>permissions</b> : ProtectedPermission - <I>Permissions on this object.</I></a>
+              <a data-toggle="collapse" data-parent="#nsd_qr_accordion" href="#nsd_qs_collapse_collapse" aria-expanded="false" aria-controls="nsd_qs_collapse_collapse"><b>permissions</b> : ProtectedPermission - <I>Permissions on this object.</I></a>
             </h4>
           </div>
-          <div id="nsd_cp_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_cp_collapse_panel_body" class="panel-body"><p>Permissions on this object.</p>
+          <div id="nsd_qs_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_qs_collapse_panel_body" class="panel-body"><p>Permissions on this object.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Type</th>
@@ -140,16 +143,16 @@
         </div>
       </div>
     </div>
-    <div id="nsd_cn_tab_3" class="tab-pane">
-      <div id="nsd_cq_accordion" role="tablist" class="panel-group">
+    <div id="nsd_qq_tab_3" class="tab-pane">
+      <div id="nsd_qt_accordion" role="tablist" class="panel-group">
         <div class="panel panel-default">
-          <div role="tab" id="nsd_cr_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_qu_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_cq_accordion" href="#nsd_cr_collapse_collapse" aria-expanded="false" aria-controls="nsd_cr_collapse_collapse"><b>authorize</b> : AccessDecision - <I>Authorizes the principal to execute an action with a qualifier in a context and an environment. </I></a>
+              <a data-toggle="collapse" data-parent="#nsd_qt_accordion" href="#nsd_qu_collapse_collapse" aria-expanded="false" aria-controls="nsd_qu_collapse_collapse"><b>authorize</b> : AccessDecision - <I>Authorizes the principal to execute an action with a qualifier in a context and an environment. </I></a>
             </h4>
           </div>
-          <div id="nsd_cr_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_cr_collapse_panel_body" class="panel-body"><p>Authorizes the principal to execute an action with a qualifier in a context and an environment. If return value of this methos is ALLOW or DENY, it takes precedence over Principal&rsquo;s authorize() return value (i.e. Principal&rsquo;s authorize() is not invoked if this method returns anything other than ABSTAIN).</p>
+          <div id="nsd_qu_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_qu_collapse_panel_body" class="panel-body"><p>Authorizes the principal to execute an action with a qualifier in a context and an environment. If return value of this methos is ALLOW or DENY, it takes precedence over Principal&rsquo;s authorize() return value (i.e. Principal&rsquo;s authorize() is not invoked if this method returns anything other than ABSTAIN).</p>
 <p>The default implementation of this method iterates over protected permissions.</p>
               <table class="table table-bordered">
                 <tr>
@@ -199,13 +202,13 @@
           </div>
         </div>
         <div class="panel panel-default">
-          <div role="tab" id="nsd_cs_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_qv_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_cq_accordion" href="#nsd_cs_collapse_collapse" aria-expanded="false" aria-controls="nsd_cs_collapse_collapse"><b>getGrantees</b> : Principal - <I>Returns a list of principals which can be granted access to this protected. </I></a>
+              <a data-toggle="collapse" data-parent="#nsd_qt_accordion" href="#nsd_qv_collapse_collapse" aria-expanded="false" aria-controls="nsd_qv_collapse_collapse"><b>getGrantees</b> : Principal - <I>Returns a list of principals which can be granted access to this protected. </I></a>
             </h4>
           </div>
-          <div id="nsd_cs_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_cs_collapse_panel_body" class="panel-body"><p>Returns a list of principals which can be granted access to this protected. The default implementation returns a list of all realm users excluding roots plus everyone group.</p>
+          <div id="nsd_qv_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_qv_collapse_panel_body" class="panel-body"><p>Returns a list of principals which can be granted access to this protected. The default implementation returns a list of all realm users excluding roots plus everyone group.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Type</th>
