@@ -26,6 +26,8 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGenerator<EClass> {
@@ -86,7 +88,11 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		
 		gen.appendEndUml();
 		SourceStringReader reader = new SourceStringReader(sb.toString());
-		return reader.generateDiagramDescription(out).getCmapData();
+		
+		FileFormatOption fileFormatOption = new FileFormatOption(FileFormat.PNG);
+		reader.outputImage(out, 0, fileFormatOption);
+		
+		return reader.getCMapData(0, fileFormatOption);
 	}
 		
 	@Override
