@@ -48,7 +48,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			OutputStream out) throws IOException {
 		
 		StringBuilder sb = new StringBuilder();
-		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb, this::getEClassifierLocation) {
+		PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb, this::getEClassifierLocation, this::getFirstDocSentence) {
 			
 			@Override
 			protected Collection<EClass> getSubTypes(EClass eClass) {

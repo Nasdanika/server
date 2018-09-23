@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
@@ -38,10 +39,15 @@ public class PlantUmlTextGenerator {
 	
 	private Appendable collector;
 	private Function<EClassifier, String> eClassifierLinkResolver;
+	private Function<EModelElement, String> eModelElementFirstDocSentenceProvider;
 
-	public PlantUmlTextGenerator(Appendable collector, Function<EClassifier, String> eClassifierLinkResolver) {
+	public PlantUmlTextGenerator(
+			Appendable collector, 
+			Function<EClassifier, String> eClassifierLinkResolver, 
+			Function<EModelElement, String> eModelElementFirstDocSentenceProvider) {
 		this.collector = collector;
 		this.eClassifierLinkResolver = eClassifierLinkResolver;
+		this.eModelElementFirstDocSentenceProvider = eModelElementFirstDocSentenceProvider;
 	}
 	
 	private static final String RELATION_LINE = "--";
@@ -353,7 +359,7 @@ public class PlantUmlTextGenerator {
 	public void append(EClass eClass, String background) throws IOException {
 		// TODO - Generics
 		String modifiers = eClass.isAbstract() && !eClass.isInterface() ? "abstract" : null;
-		appendClassStart(modifiers, eClass.isInterface() ? "interface" : "class", qualifiedName(eClass), eClassifierLinkResolver == null ? null : eClassifierLinkResolver.apply(eClass), background);
+		appendClassStart(modifiers, eClass.isInterface() ? "interface" : "class", qualifiedName(eClass), getEClassifierLink(eClass), background);
 		if (isAppendAttributes(eClass)) {
 			for (EAttribute attribute: eClass.getEAttributes()) {			
 				EClassifier eType = attribute.getEType();
@@ -377,6 +383,25 @@ public class PlantUmlTextGenerator {
 		}
 		appendClassEnd();
 	}
+
+	/**
+	 * Constructs {@link EClassifier} with the first documentation sentence as a tooltip. 
+	 * @param eClassifier
+	 * @return
+	 */
+	protected String getEClassifierLink(EClassifier eClassifier) {
+		String link = null;
+		if (eClassifierLinkResolver != null) {
+			link = eClassifierLinkResolver.apply(eClassifier);
+			if (link != null && eModelElementFirstDocSentenceProvider != null) {
+				String firstDocSentence = eModelElementFirstDocSentenceProvider.apply(eClassifier);
+				if (!EModelElementDocumentationGenerator.isBlank(firstDocSentence)) {
+					link += " " + firstDocSentence;
+				}
+			}
+		}
+		return link;
+	}
 	
 	protected boolean isAppendAttributes(EClass eClass) {
 		return true;
@@ -391,7 +416,7 @@ public class PlantUmlTextGenerator {
 	}	
 	
 	public void append(EDataType dataType, String background) throws IOException {
-		appendClassStart(null, "class", qualifiedName(dataType)+" << (D,orchid) >>", eClassifierLinkResolver == null ? null : eClassifierLinkResolver.apply(dataType), background);
+		appendClassStart(null, "class", qualifiedName(dataType)+" << (D,orchid) >>", getEClassifierLink(dataType), background);
 		if (dataType.getInstanceClassName() != null) {
 			appendAttribute(null, null, null, dataType.getInstanceClassName());
 		}
@@ -403,7 +428,7 @@ public class PlantUmlTextGenerator {
 	}
 	
 	public void append(EEnum eEnum, String background) throws IOException {
-		appendClassStart(null, "enum", qualifiedName(eEnum), eClassifierLinkResolver == null ? null : eClassifierLinkResolver.apply(eEnum), background);
+		appendClassStart(null, "enum", qualifiedName(eEnum), getEClassifierLink(eEnum), background);
 		for (EEnumLiteral literal : eEnum.getELiterals()) {
 			appendAttribute(String.valueOf(literal.getValue()), null, literal.getName(), literal.getName().equals(literal.getLiteral()) ? "" : literal.getLiteral());
 		}
