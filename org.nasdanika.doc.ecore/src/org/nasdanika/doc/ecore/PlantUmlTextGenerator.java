@@ -396,7 +396,7 @@ public class PlantUmlTextGenerator {
 			if (link != null && eModelElementFirstDocSentenceProvider != null) {
 				String firstDocSentence = eModelElementFirstDocSentenceProvider.apply(eClassifier);
 				if (!EModelElementDocumentationGenerator.isBlank(firstDocSentence)) {
-					link += " " + firstDocSentence;
+					link += "{" + firstDocSentence + "}";
 				}
 			}
 		}
