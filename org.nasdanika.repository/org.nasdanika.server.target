@@ -11,22 +11,6 @@
 <repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="json" version="20170516.0.0"/>
-<unit id="org.jsoup" version="1.10.3"/>
-<unit id="org.mozilla.rhino" version="1.7.7.2"/>
-<unit id="org.yaml.snakeyaml" version="1.18.0"/>
-<repository location="http://www.nasdanika.org/maven-osgi"/>
-	<unit id="org.mozilla.rhino.source" version="1.7.7.2"/>
-	<unit id="org.apache.commons.codec" version="1.10.0"/>
-	<unit id="org.apache.commons.jxpath" version="1.3.0"/>
-	<unit id="org.apache.commons.jxpath.source" version="1.3.0"/>
-	<unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.8"/>
-	<unit id="org.apache.aries.util" version="1.0.0"/>
-	<unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
-	<unit id="org.objenesis.source" version="2.1.0"/>
-	<unit id="org.yaml.snakeyaml.source" version="1.18.0"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.4.10.201805070144"/>
 <unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.4.10.201805070144"/>
 <repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x"/>
@@ -41,12 +25,19 @@
 <repository location="http://www.nasdanika.org/products/html/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201707110427"/>
-<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.nasdanika.story.feature.feature.group" version="0.1.0.201704230221"/>
 <repository location="http://www.nasdanika.org/products/story/repository"/>
 </location>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+		<unit id="net.sourceforge.plantuml" version="1.2018.11"/>
+		<unit id="org.apache.aries.util" version="1.0.0"/>
+		<unit id="org.apache.commons.jxpath" version="1.3.0"/>
+		<unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
+		<repository location="http://www.nasdanika.org/products/maven-osgi/repository"/>
+	</location>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+		<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201809230710"/>
+		<repository location="https://www.nasdanika.org/products/third-party/repository"/>
+	</location>
 </locations>
 </target>

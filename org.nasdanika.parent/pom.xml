@@ -62,7 +62,7 @@
 		</repository>
 		<repository>
 			<id>maven-osgi</id>
-			<url>http://www.nasdanika.org/maven-osgi</url>
+			<url>http://www.nasdanika.org/products/maven-osgi/repository</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
