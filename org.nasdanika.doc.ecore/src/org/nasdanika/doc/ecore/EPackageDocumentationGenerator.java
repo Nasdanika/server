@@ -122,8 +122,18 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		
 		return ret.toString();				
 	}
+		
+	protected int diagramTabDocLengthThreshold = 2500; 
+	
+	public void setDiagramTabDocLengthThreshold(int diagramTabDocLengthThreshold) {
+		this.diagramTabDocLengthThreshold = diagramTabDocLengthThreshold;
+	}
+	
+	public int getDiagramTabDocLengthThreshold() {
+		return diagramTabDocLengthThreshold;
+	}	
 
-	protected void documentationTab(Tabs tabs) {
+	protected boolean documentationTab(Tabs tabs, String diagramCMap) {
 		HTMLFactory htmlFactory = getHtmlFactory();
 		Fragment ret = htmlFactory.fragment();
 		String doc = getModelDocumentation(getModelElement());
@@ -143,11 +153,21 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			ret.content(documentAnnotation(eAnnotation));
 		}
 		
-		if (!ret.isEmpty()) {
-			tabs.item("Documentation", ret);
+		if (ret.isEmpty()) {
+			return false;
 		}
+		
+		tabs.item("Documentation", ret);
+		if (doc == null || doc.length() > getDiagramTabDocLengthThreshold()) {
+			return false;
+		}
+		
+		ret.content(htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation()).attribute("usemap", "#plantuml_map"));
+		ret.content(diagramCMap);
+		
+		return true;
 	}
-
+	
 	private Tag getPackageIcon() {
 		return getHtmlFactory().tag(TagName.img)
 				.attribute("src", getIconsBaseLocation()+"EPackage.gif")
@@ -155,8 +175,9 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 	}			
 	
 	protected void tabs(Tabs tabs, String diagramCMap) {
-		documentationTab(tabs);		
-		diagramTab(tabs, diagramCMap);
+		if (!documentationTab(tabs, diagramCMap)) {
+			diagramTab(tabs, diagramCMap);
+		}
 		subPackagesTab(tabs);		
 		eClassifiersTab(tabs);	
 	}

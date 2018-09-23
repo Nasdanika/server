@@ -111,12 +111,28 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		tabs(tabs, diagramCMap);
 		return ret.toString();		
 	}
+	
+	protected int diagramTabDocLengthThreshold = 2500; 
+	
+	public void setDiagramTabDocLengthThreshold(int diagramTabDocLengthThreshold) {
+		this.diagramTabDocLengthThreshold = diagramTabDocLengthThreshold;
+	}
+	
+	public int getDiagramTabDocLengthThreshold() {
+		return diagramTabDocLengthThreshold;
+	}
 
-	protected void documentationTab(Tabs tabs) {
-		Fragment ret = getHtmlFactory().fragment();
+	/**
+	 * Returns true if documentation tab includes the diagram and there is no need in a diagram tab.
+	 * @param tabs
+	 * @return
+	 */
+	protected boolean documentationTab(Tabs tabs, String diagramCMap) {
+		HTMLFactory htmlFactory = getHtmlFactory();
+		Fragment ret = htmlFactory.fragment();
 		String doc = getModelDocumentation(getModelElement());
 		if (!isBlank(doc)) {
-			ret.content(getHtmlFactory().div(doc)
+			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
 					.style().margin().top("10px")
 					.style().margin().bottom("10px"));
@@ -126,12 +142,19 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			ret.content(documentAnnotation(eAnnotation));
 		}
 		
-		if (!ret.isEmpty()) {
-			tabs.item("Documentation", ret);
+		if (ret.isEmpty()) {
+			return false;
 		}
+		
+		tabs.item("Documentation", ret);
+		if (doc == null || doc.length() > getDiagramTabDocLengthThreshold()) {
+			return false;
+		}
+		
+		ret.content(htmlFactory.tag(TagName.img).attribute("src", getDiagramImageLocation()).attribute("usemap", "#plantuml_map"), diagramCMap);			
+		return true;
 	}
 	
-
 	/**
 	 * Override to return a list of sub-types of given EClass. 
 	 * This implementation returns all sub-types found in the EClass' current package. 
@@ -473,8 +496,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	}
 
 	protected void tabs(Tabs tabs, String diagramCMap) {
-		documentationTab(tabs);
-		diagramTab(tabs, diagramCMap);
+		if (!documentationTab(tabs, diagramCMap)) {
+			diagramTab(tabs, diagramCMap);
+		}
 		attributesTab(tabs);
 		referencesTab(tabs);
 		operationsTab(tabs);
