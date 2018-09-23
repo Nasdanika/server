@@ -6,29 +6,26 @@
 <div>
   <ul class="nav nav-tabs">
     <li class="active">
-      <a href="#nsd_rm_tab_0" data-toggle="tab">Documentation</a>
+      <a href="#nsd_ff_tab_0" data-toggle="tab">Documentation</a>
     </li>
     <li>
-      <a href="#nsd_rm_tab_1" data-toggle="tab">Diagram</a>
-    </li>
-    <li>
-      <a href="#nsd_rm_tab_2" data-toggle="tab">
+      <a href="#nsd_ff_tab_1" data-toggle="tab">
 <img src="resources/images/EAttribute.gif" style="margin-right:5px"/> Attributes</a>
     </li>
     <li>
-      <a href="#nsd_rm_tab_3" data-toggle="tab">
+      <a href="#nsd_ff_tab_2" data-toggle="tab">
 <img src="resources/images/EReference.gif" style="margin-right:5px"/> References</a>
     </li>
     <li>
-      <a href="#nsd_rm_tab_4" data-toggle="tab">
+      <a href="#nsd_ff_tab_3" data-toggle="tab">
 <img src="resources/images/EOperation.gif" style="margin-right:5px"/> Operations</a>
     </li>
     <li>
-      <a href="#nsd_rm_tab_5" data-toggle="tab">Supertypes</a>
+      <a href="#nsd_ff_tab_4" data-toggle="tab">Supertypes</a>
     </li>
   </ul>
   <div class="tab-content">
-    <div id="nsd_rm_tab_0" class="tab-pane active">
+    <div id="nsd_ff_tab_0" class="tab-pane active">
       <div style="margin-top:10px;margin-bottom:10px" class="markdown-body"><p>Base class for application-specific tokens.</p>
 <p>When TokenCredentials are passed to authenticate(), the default implementation in LoginsPasswordRealm takes the part of the token before the first dot and decodes it as CDOID. Then it gets an object by that ID and, if it is Token, returns it.</p></div>
 <div class="panel panel-info">
@@ -44,23 +41,22 @@
       <td>label</td>
       <td style="white-space:pre-wrap;font-family:monospace">{{eclass-name}}</td>
     </tr>
-  </table></div></div>
-    <div id="nsd_rm_tab_1" class="tab-pane">
+  </table></div>
       <img src="75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Token.png" usemap="#plantuml_map"/><map id="plantuml_map" name="plantuml_map">
-<area shape="rect" id="id1" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Token.html" title="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Token.html" alt="" coords="276,223,343,271"/>
-<area shape="rect" id="id2" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html" title="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html" alt="" coords="38,60,582,163"/>
+<area shape="rect" id="id1" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Token.html" title="Base class for application-specific tokens. " alt="" coords="276,223,343,271"/>
+<area shape="rect" id="id2" href="#router/doc-content/75726e3a6f72672e6e617364616e696b612e63646f2e7365637572697479/Principal.html" title="Permissions to perform actions on model elements are granted or denied to principals." alt="" coords="38,60,582,163"/>
 </map>
 </div>
-    <div id="nsd_rm_tab_2" class="tab-pane">
-      <div id="nsd_rn_accordion" role="tablist" class="panel-group">
+    <div id="nsd_ff_tab_1" class="tab-pane">
+      <div id="nsd_fg_accordion" role="tablist" class="panel-group">
         <div class="panel panel-default">
-          <div role="tab" id="nsd_ro_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fh_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rn_accordion" href="#nsd_ro_collapse_collapse" aria-expanded="false" aria-controls="nsd_ro_collapse_collapse"><b>disabled</b> : EBoolean (Principal)  - <I>Disabling a principal has the same effect as deleting it, but with the ability to enable at some later point of time.</I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fg_accordion" href="#nsd_fh_collapse_collapse" aria-expanded="false" aria-controls="nsd_fh_collapse_collapse"><b>disabled</b> : EBoolean (Principal)  - <I>Disabling a principal has the same effect as deleting it, but with the ability to enable at some later point of time.</I></a>
             </h4>
           </div>
-          <div id="nsd_ro_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_ro_collapse_panel_body" class="panel-body"><p>Disabling a principal has the same effect as deleting it, but with the ability to enable at some later point of time.</p>
+          <div id="nsd_fh_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fh_collapse_panel_body" class="panel-body"><p>Disabling a principal has the same effect as deleting it, but with the ability to enable at some later point of time.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -127,16 +123,16 @@
         </div>
       </div>
     </div>
-    <div id="nsd_rm_tab_3" class="tab-pane">
-      <div id="nsd_rp_accordion" role="tablist" class="panel-group">
+    <div id="nsd_ff_tab_2" class="tab-pane">
+      <div id="nsd_fi_accordion" role="tablist" class="panel-group">
         <div class="panel panel-default">
-          <div role="tab" id="nsd_rq_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fj_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rp_accordion" href="#nsd_rq_collapse_collapse" aria-expanded="false" aria-controls="nsd_rq_collapse_collapse"><b>memberOf</b> : Group (Principal)  - <I>Opposite to Group.members.</I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fi_accordion" href="#nsd_fj_collapse_collapse" aria-expanded="false" aria-controls="nsd_fj_collapse_collapse"><b>memberOf</b> : Group (Principal)  - <I>Opposite to Group.members.</I></a>
             </h4>
           </div>
-          <div id="nsd_rq_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_rq_collapse_panel_body" class="panel-body"><p>Opposite to <code>Group.members</code>.</p>
+          <div id="nsd_fj_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fj_collapse_panel_body" class="panel-body"><p>Opposite to <code>Group.members</code>.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -223,13 +219,13 @@
           </div>
         </div>
         <div class="panel panel-default">
-          <div role="tab" id="nsd_rr_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fk_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rp_accordion" href="#nsd_rr_collapse_collapse" aria-expanded="false" aria-controls="nsd_rr_collapse_collapse"><b>permissions</b> : PrincipalPermission (Principal)  - <I>Permissions of this principal.</I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fi_accordion" href="#nsd_fk_collapse_collapse" aria-expanded="false" aria-controls="nsd_fk_collapse_collapse"><b>permissions</b> : PrincipalPermission (Principal)  - <I>Permissions of this principal.</I></a>
             </h4>
           </div>
-          <div id="nsd_rr_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_rr_collapse_panel_body" class="panel-body"><p>Permissions of this principal.</p>
+          <div id="nsd_fk_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fk_collapse_panel_body" class="panel-body"><p>Permissions of this principal.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -318,16 +314,16 @@
         </div>
       </div>
     </div>
-    <div id="nsd_rm_tab_4" class="tab-pane">
-      <div id="nsd_rs_accordion" role="tablist" class="panel-group">
+    <div id="nsd_ff_tab_3" class="tab-pane">
+      <div id="nsd_fl_accordion" role="tablist" class="panel-group">
         <div class="panel panel-default">
-          <div role="tab" id="nsd_rt_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fm_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rs_accordion" href="#nsd_rt_collapse_collapse" aria-expanded="false" aria-controls="nsd_rt_collapse_collapse"><b>accept</b> : void (Principal)  - <I>Invokes PrincipalVisitor.visit() on this principal. </I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fl_accordion" href="#nsd_fm_collapse_collapse" aria-expanded="false" aria-controls="nsd_fm_collapse_collapse"><b>accept</b> : void (Principal)  - <I>Invokes PrincipalVisitor.visit() on this principal. </I></a>
             </h4>
           </div>
-          <div id="nsd_rt_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_rt_collapse_panel_body" class="panel-body"><p>Invokes <code>PrincipalVisitor.visit()</code> on this principal. For groups invokes <code>accept(principalVisitor)</code> on all group members.</p>
+          <div id="nsd_fm_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fm_collapse_panel_body" class="panel-body"><p>Invokes <code>PrincipalVisitor.visit()</code> on this principal. For groups invokes <code>accept(principalVisitor)</code> on all group members.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -363,13 +359,13 @@
           </div>
         </div>
         <div class="panel panel-default">
-          <div role="tab" id="nsd_ru_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fn_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rs_accordion" href="#nsd_ru_collapse_collapse" aria-expanded="false" aria-controls="nsd_ru_collapse_collapse"><b>authorize</b> : AccessDecision (Principal)  - <I>Authorizes to execute an action with a qualifier on an object in a context and an environment. </I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fl_accordion" href="#nsd_fn_collapse_collapse" aria-expanded="false" aria-controls="nsd_fn_collapse_collapse"><b>authorize</b> : AccessDecision (Principal)  - <I>Authorizes to execute an action with a qualifier on an object in a context and an environment. </I></a>
             </h4>
           </div>
-          <div id="nsd_ru_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_ru_collapse_panel_body" class="panel-body"><p>Authorizes to execute an action with a qualifier on an object in a context and an environment. If target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal&rsquo;s authorize().</p>
+          <div id="nsd_fn_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fn_collapse_panel_body" class="panel-body"><p>Authorizes to execute an action with a qualifier on an object in a context and an environment. If target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal&rsquo;s authorize().</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -424,13 +420,13 @@
           </div>
         </div>
         <div class="panel panel-default">
-          <div role="tab" id="nsd_rv_collapse_heading" class="panel-heading">
+          <div role="tab" id="nsd_fo_collapse_heading" class="panel-heading">
             <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#nsd_rs_accordion" href="#nsd_rv_collapse_collapse" aria-expanded="false" aria-controls="nsd_rv_collapse_collapse"><b>getRealm</b> : Realm (Principal)  - <I>Realm this principal belongs to. </I></a>
+              <a data-toggle="collapse" data-parent="#nsd_fl_accordion" href="#nsd_fo_collapse_collapse" aria-expanded="false" aria-controls="nsd_fo_collapse_collapse"><b>getRealm</b> : Realm (Principal)  - <I>Realm this principal belongs to. </I></a>
             </h4>
           </div>
-          <div id="nsd_rv_collapse_collapse" class="panel-collapse collapse">
-            <div id="nsd_rv_collapse_panel_body" class="panel-body"><p>Realm this principal belongs to. The default implementation traverses containment hierarchy until it finds a container of type <code>Realm</code>.</p>
+          <div id="nsd_fo_collapse_collapse" class="panel-collapse collapse">
+            <div id="nsd_fo_collapse_panel_body" class="panel-body"><p>Realm this principal belongs to. The default implementation traverses containment hierarchy until it finds a container of type <code>Realm</code>.</p>
               <table class="table table-bordered">
                 <tr>
                   <th style="align:left">Declaring Type</th>
@@ -465,7 +461,7 @@
         </div>
       </div>
     </div>
-    <div id="nsd_rm_tab_5" class="tab-pane">
+    <div id="nsd_ff_tab_4" class="tab-pane">
       <table class="table table-bordered">
         <tr class="info">
           <th>Name</th>
