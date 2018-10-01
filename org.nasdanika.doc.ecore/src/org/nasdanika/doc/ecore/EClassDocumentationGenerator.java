@@ -5,9 +5,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -168,12 +172,13 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	 * @return
 	 */
 	protected Collection<EClass> getSubTypes(EClass eClass) {
-		Collection<EClass> ret = new ArrayList<>();
-		for (EClassifier ec: getModelElement().getEPackage().getEClassifiers()) {
-			if (eClass != ec && ec instanceof EClass && eClass.isSuperTypeOf((EClass) ec)) {
-				ret.add((EClass) ec);
+		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		Set<EClass> ret = new HashSet<>();
+		acit.forEachRemaining(notifier -> {
+			if (notifier instanceof EClass && ((EClass) notifier).getESuperTypes().contains(eClass)) {
+				ret.add((EClass) notifier);
 			}
-		}
+		});
 		return ret;
 	}
 	

@@ -3,12 +3,13 @@ package org.nasdanika.doc.ecore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -315,19 +316,33 @@ public class PlantUmlTextGenerator {
 	}
 	
 	/**
-	 * In situations where subtypes of a given type are known this method can be overridden. 
+	 * Finds all subtypes in the resourceset. 
 	 * @return
 	 */
 	protected Collection<EClass> getSubTypes(EClass eClass) {
-		return Collections.emptySet();
+		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		Set<EClass> ret = new HashSet<>();
+		acit.forEachRemaining(notifier -> {
+			if (notifier instanceof EClass && ((EClass) notifier).getESuperTypes().contains(eClass)) {
+				ret.add((EClass) notifier);
+			}
+		});
+		return ret;
 	}
 	
 	/**
-	 * In situations where classes referencing this class are known this method can be overridden. 
+	 * Finds all referrers in the resourceset. 
 	 * @return
 	 */
 	protected Collection<EClass> getReferrers(EClass eClass) {
-		return Collections.emptySet();
+		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		Set<EClass> ret = new HashSet<>();
+		acit.forEachRemaining(notifier -> {
+			if (notifier instanceof EReference && ((EReference) notifier).getEReferenceType() == eClass) {
+				ret.add(((EReference) notifier).getEContainingClass());
+			}
+		});
+		return ret;
 	}
 	
 	public void append(EClassifier eClassifier) throws IOException {
