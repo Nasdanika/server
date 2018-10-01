@@ -17,8 +17,11 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Glyphicon;
@@ -172,11 +175,22 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	 * @return
 	 */
 	protected Collection<EClass> getSubTypes(EClass eClass) {
-		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		TreeIterator<?> acit;
+		Resource eResource = eClass.eResource();
+		if (eResource == null) {
+			EPackage ePackage = eClass.getEPackage();
+			if (ePackage == null) {
+				return Collections.emptySet();
+			}
+			acit = ePackage.eAllContents();
+		} else {
+			ResourceSet resourceSet = eResource.getResourceSet();
+			acit = resourceSet == null ? eResource.getAllContents() : eResource.getAllContents();
+		}
 		Set<EClass> ret = new HashSet<>();
-		acit.forEachRemaining(notifier -> {
-			if (notifier instanceof EClass && ((EClass) notifier).getESuperTypes().contains(eClass)) {
-				ret.add((EClass) notifier);
+		acit.forEachRemaining(obj -> {
+			if (obj instanceof EClass && ((EClass) obj).getESuperTypes().contains(eClass)) {
+				ret.add((EClass) obj);
 			}
 		});
 		return ret;

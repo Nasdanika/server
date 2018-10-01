@@ -3,6 +3,7 @@ package org.nasdanika.doc.ecore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -22,6 +23,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
  * This code is based on net.sourceforge.plantuml.text.AbstractDiagramTextProvider and 
@@ -320,11 +323,22 @@ public class PlantUmlTextGenerator {
 	 * @return
 	 */
 	protected Collection<EClass> getSubTypes(EClass eClass) {
-		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		TreeIterator<?> acit;
+		Resource eResource = eClass.eResource();
+		if (eResource == null) {
+			EPackage ePackage = eClass.getEPackage();
+			if (ePackage == null) {
+				return Collections.emptySet();
+			}
+			acit = ePackage.eAllContents();
+		} else {
+			ResourceSet resourceSet = eResource.getResourceSet();
+			acit = resourceSet == null ? eResource.getAllContents() : eResource.getAllContents();
+		}
 		Set<EClass> ret = new HashSet<>();
-		acit.forEachRemaining(notifier -> {
-			if (notifier instanceof EClass && ((EClass) notifier).getESuperTypes().contains(eClass)) {
-				ret.add((EClass) notifier);
+		acit.forEachRemaining(obj -> {
+			if (obj instanceof EClass && ((EClass) obj).getESuperTypes().contains(eClass)) {
+				ret.add((EClass) obj);
 			}
 		});
 		return ret;
@@ -335,11 +349,22 @@ public class PlantUmlTextGenerator {
 	 * @return
 	 */
 	protected Collection<EClass> getReferrers(EClass eClass) {
-		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		TreeIterator<?> acit;
+		Resource eResource = eClass.eResource();
+		if (eResource == null) {
+			EPackage ePackage = eClass.getEPackage();
+			if (ePackage == null) {
+				return Collections.emptySet();
+			}
+			acit = ePackage.eAllContents();
+		} else {
+			ResourceSet resourceSet = eResource.getResourceSet();
+			acit = resourceSet == null ? eResource.getAllContents() : eResource.getAllContents();
+		}
 		Set<EClass> ret = new HashSet<>();
-		acit.forEachRemaining(notifier -> {
-			if (notifier instanceof EReference && ((EReference) notifier).getEReferenceType() == eClass) {
-				ret.add(((EReference) notifier).getEContainingClass());
+		acit.forEachRemaining(obj -> {
+			if (obj instanceof EReference && ((EReference) obj).getEReferenceType() == eClass) {
+				ret.add(((EReference) obj).getEContainingClass());
 			}
 		});
 		return ret;

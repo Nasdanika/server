@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,8 @@ import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.jsoup.Jsoup;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
@@ -308,11 +311,22 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 	 * @return
 	 */	
 	protected Collection<EClass> getReferrers(EClass eClass) {
-		TreeIterator<Notifier> acit = eClass.eResource().getResourceSet().getAllContents();
+		TreeIterator<?> acit;
+		Resource eResource = eClass.eResource();
+		if (eResource == null) {
+			EPackage ePackage = eClass.getEPackage();
+			if (ePackage == null) {
+				return Collections.emptySet();
+			}
+			acit = ePackage.eAllContents();
+		} else {
+			ResourceSet resourceSet = eResource.getResourceSet();
+			acit = resourceSet == null ? eResource.getAllContents() : eResource.getAllContents();
+		}
 		Set<EClass> ret = new HashSet<>();
-		acit.forEachRemaining(notifier -> {
-			if (notifier instanceof EReference && ((EReference) notifier).getEReferenceType() == eClass) {
-				ret.add(((EReference) notifier).getEContainingClass());
+		acit.forEachRemaining(obj -> {
+			if (obj instanceof EReference && ((EReference) obj).getEReferenceType() == eClass) {
+				ret.add(((EReference) obj).getEContainingClass());
 			}
 		});
 		return ret;
