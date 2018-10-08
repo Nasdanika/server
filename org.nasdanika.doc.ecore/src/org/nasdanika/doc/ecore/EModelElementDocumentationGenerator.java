@@ -219,14 +219,19 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 			return Hex.encodeHexString(((EPackage) namedElement).getNsURI().getBytes(StandardCharsets.UTF_8));
 		}
 		
+		String name = namedElement.getName();
+		if (isBlank(namedElement.getName())) {
+			name = Integer.toString(namedElement.hashCode(), Character.MAX_RADIX); // Should never happen, but sometimes happens :-(
+		}
+		
 		if (namedElement instanceof EClassifier) {
 			for (int i = -1; i < 1000000; ++i) {
 				try {
-					String urlEncodedName = URLEncoder.encode(namedElement.getName(), "UTF-8");
-					if (urlEncodedName.equals(namedElement.getName())) {
+					String urlEncodedName = URLEncoder.encode(name, "UTF-8");
+					if (urlEncodedName.equals(name)) {
 						return urlEncodedName;
 					}
-					String fileName = Hex.encodeHexString(namedElement.getName().getBytes(StandardCharsets.UTF_8));
+					String fileName = Hex.encodeHexString(name.getBytes(StandardCharsets.UTF_8));
 					if (i > -1) {
 						fileName += "-"+Integer.toString(i, Character.MAX_RADIX);
 					}
@@ -234,12 +239,12 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 						return fileName;
 					}
 				} catch (UnsupportedEncodingException e) {
-					return namedElement.getName();
+					return name;
 				}
 			}
 		}
 		
-		return namedElement.getName();
+		return name;
 	}
 
 	/**
