@@ -12,5 +12,6 @@ Export-Package: org.nasdanika.cdo.security.provider
 Require-Bundle: org.eclipse.core.runtime,
  org.nasdanika.cdo.security;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,
- org.eclipse.emf.cdo.edit
+ org.eclipse.emf.cdo.edit;visibility:=reexport
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.nasdanika.cdo.security.edit
