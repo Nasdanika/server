@@ -11,6 +11,10 @@
   <name>Core</name>
   <description>Core classes and interfaces for contextual command execution.</description>  
   
+	<properties>
+		<siteDir>server/${project.version}/${project.artifactId}</siteDir>
+	</properties>  
+  
 	<build>
 		<plugins>
 			<plugin>
@@ -25,11 +29,11 @@
 			</plugin>				
 		</plugins>
 	</build>
-	<url>https://www.nasdanika.org/products/server/${project.version}/org.nasdanika.core/</url>
+	<url>https://www.nasdanika.org/products/${siteDir}/</url>
 	<distributionManagement>
 		<site>
 			<id>nasdanika-org</id>
-			<url>ftp://${env.FTP_SERVER}/server/${project.version}/org.nasdanika.core</url>
+			<url>ftp://${env.FTP_SERVER}/${siteDir}</url>
 		</site>
 	</distributionManagement>	
   

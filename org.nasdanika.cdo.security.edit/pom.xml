@@ -9,4 +9,8 @@
   <artifactId>org.nasdanika.cdo.security.edit</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>CDO Security Edit</name>
+  
+	<properties>
+		<siteDir>server/${project.version}/${project.artifactId}</siteDir>
+	</properties>  
 </project>

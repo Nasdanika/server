@@ -216,15 +216,15 @@
 						<phase>post-site</phase>
 						<configuration>
 							<target>
-								<ftp passive="yes" action="mkdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}"/>
+								<ftp passive="yes" action="mkdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/server/${project.version}"/>
 							
-								<ftp passive="yes" action="delete" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}">
+								<ftp passive="yes" action="delete" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/server/${project.version}">
 									<fileset defaultexcludes="false">
 										<include name="**" />
 									</fileset>
 								</ftp>
 								
-								<ftp passive="yes" action="rmdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}">
+								<ftp passive="yes" action="rmdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/server/${project.version}">
 									<fileset defaultexcludes="false">
 										<include name="**" />
 									</fileset>
@@ -249,6 +249,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>						
+			
 		</plugins>
 	</build>
 	<modules>

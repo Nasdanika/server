@@ -10,6 +10,10 @@
   <packaging>eclipse-plugin</packaging>
   <name>Nasdanika CDO Scheduler</name>  
   <description>Scheduler which executes tasks in the context of CDOTransaction.</description>
+  
+	<properties>
+		<siteDir>server/${project.version}/${project.artifactId}</siteDir>
+	</properties>  
 	<build>
 		<plugins>
 			<plugin>
@@ -24,11 +28,11 @@
 			</plugin>				
 		</plugins>
 	</build>
-	<url>https://www.nasdanika.org/products/server/${project.version}/${project.artifactId}/</url>
+	<url>https://www.nasdanika.org/products/${siteDir}/</url>
 	<distributionManagement>
 		<site>
 			<id>nasdanika-org</id>
-			<url>ftp://${env.FTP_SERVER}/server/${project.version}/${project.artifactId}</url>
+			<url>ftp://${env.FTP_SERVER}/${siteDir}</url>
 		</site>
 	</distributionManagement>	
 </project>
