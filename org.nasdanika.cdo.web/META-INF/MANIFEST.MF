@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nasdanika CDO Web components
 Bundle-SymbolicName: org.nasdanika.cdo.web;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: Nasdanika
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.nasdanika.web;bundle-version="1.1.0";visibility:=reexport,
- org.nasdanika.cdo;bundle-version="1.1.0";visibility:=reexport,
+Require-Bundle: org.nasdanika.web;bundle-version="2.0.0";visibility:=reexport,
+ org.nasdanika.cdo;bundle-version="2.0.0";visibility:=reexport,
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.mozilla.rhino;bundle-version="1.0.0",
  org.pegdown;visibility:=reexport,
@@ -16,9 +16,7 @@ Require-Bundle: org.nasdanika.web;bundle-version="1.1.0";visibility:=reexport,
  org.yaml.snakeyaml;bundle-version="1.18.0",
  org.eclipse.emf.cdo.common
 Export-Package: org.nasdanika.cdo.web,
- org.nasdanika.cdo.web.html,
  org.nasdanika.cdo.web.objectpathresolvers,
- org.nasdanika.cdo.web.routes,
- org.nasdanika.cdo.web.routes.app
+ org.nasdanika.cdo.web.routes
 Import-Package: javax.servlet;version="2.6.0",
  javax.servlet.http;version="2.6.0"

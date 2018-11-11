@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.nasdanika.feature_1.1.0.qualifier.jar" id="org.nasdanika.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.feature_2.0.0.qualifier.jar" id="org.nasdanika.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.cdo.feature_1.1.0.qualifier.jar" id="org.nasdanika.cdo.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.cdo.feature_2.0.0.qualifier.jar" id="org.nasdanika.cdo.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.equinox.feature_1.1.0.qualifier.jar" id="org.nasdanika.equinox.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.equinox.feature_2.0.0.qualifier.jar" id="org.nasdanika.equinox.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.cdo.security.feature_1.1.0.qualifier.jar" id="org.nasdanika.cdo.security.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.cdo.security.feature_2.0.0.qualifier.jar" id="org.nasdanika.cdo.security.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.provisioning.feature_1.1.0.qualifier.jar" id="org.nasdanika.provisioning.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.provisioning.feature_2.0.0.qualifier.jar" id="org.nasdanika.provisioning.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.server.jetty.feature_1.1.0.qualifier.jar" id="org.nasdanika.server.jetty.feature" version="1.1.0.qualifier">
+   <feature url="features/org.nasdanika.server.jetty.feature_2.0.0.qualifier.jar" id="org.nasdanika.server.jetty.feature" version="2.0.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
    <category-def name="org.nasdanika.runtime" label="Runtime bundles">

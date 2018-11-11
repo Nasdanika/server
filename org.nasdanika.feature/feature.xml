@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.feature"
       label="Nasdanika Bundles"
-      version="1.1.0.qualifier">
+      version="2.0.0.qualifier">
 
    <description>
       Nasdanika foundation server components.
@@ -194,6 +194,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          version="0.0.0"
          unpack="false"/>
 
+<!--
    <plugin
          id="org.nasdanika.cdo.web.doc"
          download-size="0"
@@ -207,7 +208,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+-->
    <plugin
          id="org.apache.commons.lang3"
          download-size="0"
@@ -229,6 +230,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          version="0.0.0"
          unpack="false"/>
 
+<!--
    <plugin
          id="org.nasdanika.doc.ecore"
          download-size="0"
@@ -242,6 +244,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+-->
 
    <plugin
          id="org.jsoup"

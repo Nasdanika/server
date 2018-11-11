@@ -27,7 +27,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.Description;

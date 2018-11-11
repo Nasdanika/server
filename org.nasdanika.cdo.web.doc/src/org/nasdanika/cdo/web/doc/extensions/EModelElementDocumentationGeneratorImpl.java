@@ -29,8 +29,8 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement;
+import org.nasdanika.html.TagName;
+import org.nasdanika.html.Markup;
 
 public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelElement> implements EModelElementDocumentationGenerator<T> {
 	
@@ -196,7 +196,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		}		
 	}		
 	
-	public static UIElement<?> preStyle(UIElement<?> uiElement) {
+	public static Markup<?> preStyle(Markup<?> uiElement) {
 		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
 	

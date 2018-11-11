@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.cdo.feature"
       label="CDO Runtime Bundles"
-      version="1.1.0.qualifier"
+      version="2.0.0.qualifier"
       provider-name="Nasdanika LLC">
 
    <description url="http://www.example.com/description">

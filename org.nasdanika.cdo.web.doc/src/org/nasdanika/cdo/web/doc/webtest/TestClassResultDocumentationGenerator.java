@@ -20,7 +20,7 @@ import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tag;
+import org.nasdanika.html.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.OperationStatus;
@@ -71,7 +71,7 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		if (obj.eContainer() instanceof ParameterizedTestResult && !parameters.isEmpty()) {
 			
-			ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
+			ret.content(htmlFactory.tag(TagName.h4, "Parameters"));
 			Table parametersTable = htmlFactory.table().bordered();
 			ret.content(parametersTable);
 			parametersTable.header().headerRow("Title", "Value", "Description", "Field", "Type").style(Bootstrap.Style.INFO);
@@ -90,7 +90,7 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 				pRow.cell(testResultsDocumentationGenerator.getDocRoute().javaDocLink(className, false, false));
 			}
 			
-			ret.content(htmlFactory.tag(Tag.TagName.h4, "Test methods"));
+			ret.content(htmlFactory.tag(TagName.h4, "Test methods"));
 			methodResults(obj, context, baseURI, urlPrefix, htmlFactory, ret);
 						
 			return ret;

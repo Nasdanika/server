@@ -5,7 +5,7 @@
   <parent>
   	<groupId>org.nasdanika</groupId>
   	<artifactId>org.nasdanika.parent</artifactId>
-  	<version>1.1.0-SNAPSHOT</version>
+  	<version>2.0.0-SNAPSHOT</version>
   	<relativePath>../org.nasdanika.parent</relativePath>
   </parent>
   
@@ -23,11 +23,11 @@
 			</plugin>				
 		</plugins>
 	</build>
-	<url>https://www.nasdanika.org/products/server/org.nasdanika.cdo/</url>
+	<url>https://www.nasdanika.org/products/server/${project.version}/org.nasdanika.cdo/</url>
 	<distributionManagement>
 		<site>
 			<id>nasdanika-org</id>
-			<url>ftp://${env.FTP_SERVER}/server/org.nasdanika.cdo</url>
+			<url>ftp://${env.FTP_SERVER}/server/${project.version}/org.nasdanika.cdo</url>
 		</site>
 	</distributionManagement>
   

@@ -31,7 +31,7 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;

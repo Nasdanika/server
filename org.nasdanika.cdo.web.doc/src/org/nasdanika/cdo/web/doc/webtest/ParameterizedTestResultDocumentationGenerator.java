@@ -17,7 +17,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tag;
+import org.nasdanika.html.TagName;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.Descriptor;
@@ -268,7 +268,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 		description(obj, ret, context, baseURI, urlPrefix);
 		links(obj, ret, context, baseURI, urlPrefix);
 		
-		ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
+		ret.content(htmlFactory.tag(TagName.h4, "Parameters"));
 		Table parametersTable = htmlFactory.table().bordered();
 		ret.content(parametersTable);
 		parametersTable.header().headerRow("Title", "Description", "Field", "Type").style(Bootstrap.Style.INFO);
@@ -285,7 +285,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 		}
 		
 		if (!obj.getChildren().isEmpty()) {
-			ret.content(htmlFactory.tag(Tag.TagName.h4, "Tests"));
+			ret.content(htmlFactory.tag(TagName.h4, "Tests"));
 			EMap<OperationStatus, Integer> suiteStats = testResultStats(obj);						
 			statsChart(suiteStats, ret);	
 			

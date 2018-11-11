@@ -17,7 +17,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.story.State;

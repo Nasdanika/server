@@ -10,7 +10,7 @@ import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.story.State;
 import org.nasdanika.story.Step;

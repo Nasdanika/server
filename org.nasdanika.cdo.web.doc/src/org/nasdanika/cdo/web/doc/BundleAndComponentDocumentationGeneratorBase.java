@@ -18,7 +18,7 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.osgi.model.Element;
 import org.nasdanika.osgi.model.ModelFactory;

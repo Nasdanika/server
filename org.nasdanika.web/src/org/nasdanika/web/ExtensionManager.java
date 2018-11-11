@@ -21,11 +21,7 @@ import org.nasdanika.core.AdapterManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
-import org.nasdanika.core.NasdanikaException;
-import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Producer;
-import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.RouteDescriptor.RouteType;
 import org.nasdanika.web.html.UIPart;
 import org.osgi.framework.Bundle;
@@ -109,66 +105,6 @@ public class ExtensionManager extends AdapterManager {
 		}
 		uiPartServiceTracker.open();
 		
-		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(HTML_FACTORY_ID)) {
-			if ("default_html_factory".equals(ce.getName())) {
-				if (htmlFactoryName==null || htmlFactoryName.equals("default")) {
-					DefaultHTMLFactory defaultHTMLFactory = new DefaultHTMLFactory();
-					String bootstrapCssContainer = ce.getAttribute("bootstrapCssContainer");
-					if (!"/".equals(contextPath)) {
-						bootstrapCssContainer = contextPath+bootstrapCssContainer;
-					}
-					defaultHTMLFactory.setBootstrapCssContainer(bootstrapCssContainer);
-					for (IConfigurationElement s: ce.getChildren("script")) {
-						String scriptPath = s.getValue();
-						if (!"/".equals(contextPath)) {
-							scriptPath = contextPath+scriptPath;
-						}
-						defaultHTMLFactory.getScripts().add(scriptPath);
-					}
-					for (IConfigurationElement s: ce.getChildren("stylesheet")) {
-						String stylesheetPath = s.getValue();
-						if (!"/".equals(contextPath)) {
-							stylesheetPath = contextPath+stylesheetPath;
-						}
-						defaultHTMLFactory.getStylesheets().add(stylesheetPath);
-					}
-					defaultHTMLFactory.setProducerAdapter(new Producer.Adapter() {
-						
-						@Override
-						public Producer asProducer(Object obj) {							
-							try {
-								return adapt(Producer.class);
-							} catch (Exception e) {
-								throw new NasdanikaException(e);
-							}
-						}
-						
-					});
-					defaultHTMLFactory.setFactoryProducerAdapter(new FactoryProducer.Adapter() {
-						
-						@Override
-						public FactoryProducer asFactoryProducer(Object obj) {							
-							try {
-								return adapt(FactoryProducer.class);
-							} catch (Exception e) {
-								throw new NasdanikaException(e);
-							}
-						}
-						
-					});
-					this.htmlFactory = defaultHTMLFactory;
-					
-					break;
-				}
-			} else if ("html_factory".equals(ce.getName())) {
-				if (htmlFactoryName==null || htmlFactoryName.equals(ce.getAttribute("name"))) {
-					this.htmlFactory = (HTMLFactory) ce.createExecutableExtension("class");
-					CoreUtil.injectProperties(ce, htmlFactory);
-					break;
-				}
-			}					
-		}	
-		
 		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(UI_PART_ID)) {
 			if ("ui_part".equals(ce.getName())) {
 				UIPartEntry uiPartEntry = new UIPartEntry();
@@ -202,7 +138,6 @@ public class ExtensionManager extends AdapterManager {
 	}
 			
 	public static final String UI_PART_ID = "org.nasdanika.web.ui_part";			
-	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
 		

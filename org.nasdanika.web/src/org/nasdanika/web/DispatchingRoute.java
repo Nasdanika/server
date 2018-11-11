@@ -13,13 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.DocumentationProvider;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.web.routes.ObjectRoute;
 /**
  * Dispatches request to matching target.
@@ -309,13 +308,13 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 			row.cell(path);
 			row.cell(pattern == null ? "" : pattern);
 			if (methods.length==0 || Arrays.equals(RequestMethod.values(), methods)) {
-				row.cell("*").bootstrap().text().center();
+				row.cell("*");//.bootstrap().text().center();
 			} else if (methods.length==1) {
-				row.cell(methods[0].name()).bootstrap().text().center();
+				row.cell(methods[0].name());//.bootstrap().text().center();
 				styleApiRow(row, methods[0]);
 			} else {
 				Tag ul = row.getFactory().tag(TagName.ul);
-				row.cell(ul).bootstrap().text().center();
+				row.cell(ul);//.bootstrap().text().center();
 				for (RequestMethod rm: methods) {
 					ul.content(ul.getFactory().tag(TagName.li, rm.name()));
 				}
@@ -323,15 +322,15 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 			if (consumes == null || consumes.length==0) {
 				row.cell("");
 			} else if (consumes.length==1) {
-				row.cell(consumes[0]).bootstrap().text().center();
+				row.cell(consumes[0]);//.bootstrap().text().center();
 			} else {
 				Tag ul = row.getFactory().tag(TagName.ul);
-				row.cell(ul).bootstrap().text().center();
+				row.cell(ul);//.bootstrap().text().center();
 				for (String c: consumes) {
 					ul.content(ul.getFactory().tag(TagName.li, c));
 				}
 			}
-			row.cell(produces).bootstrap().text().center();
+			row.cell(produces);//.bootstrap().text().center();
 			row.cell(comment);
 		}
 		
@@ -413,19 +412,19 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 		env.put("title", "Web API");
 		Table apiTable = generateApiHtmlTable(context);		
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;		
-		env.put("content", htmlFactory.panel(Style.PRIMARY, "<H4><B>Web API</B></H4>", apiTable, null).style().margin("10px"));
+		env.put("content", htmlFactory.div("<H4><B>Web API</B></H4>", apiTable, null).style().margin("10px"));
 		String apiDoc = htmlFactory.interpolate(getApiDocumentationPageTemplate(), env);
 		return apiDoc;
 	}
 
 	protected Table generateApiHtmlTable(HttpServletRequestContext context) {
-		Table apiTable = HTMLFactory.INSTANCE.table().bordered();
-		Row hRow = apiTable.header().row().style(Style.PRIMARY);
+		Table apiTable = HTMLFactory.INSTANCE.table();//.bordered();
+		Row hRow = apiTable.header().row();//.style(Style.PRIMARY);
 		hRow.header("Path").rowspan(2);
 		hRow.header("Pattern").rowspan(2);
-		hRow.header("Method(s)").bootstrap().text().center();
-		hRow.header("Consumes").bootstrap().text().center();
-		hRow.header("Produces").bootstrap().text().center();
+		hRow.header("Method(s)");//.bootstrap().text().center();
+		hRow.header("Consumes");//.bootstrap().text().center();
+		hRow.header("Produces");//.bootstrap().text().center();
 		hRow.header("Comment");
 		
 		List<ApiInfo> apiInfos = new ArrayList<>();
@@ -459,29 +458,29 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 	 * @param requestMethod
 	 */
 	protected void styleApiRow(Row row, RequestMethod requestMethod) {
-		switch (requestMethod) {
-		case DELETE:
-			row.style(Style.DANGER);
-			break;
-		case GET:
-			row.style(Style.INFO);
-			break;
-		case POST:
-			row.style(Style.SUCCESS);
-			break;
-		case PUT:
-			row.style(Style.WARNING);
-			break;
-		case OPTIONS:
-			break;
-		case PATCH:
-			break;
-		case TRACE:
-			break;
-		default:
-			// Nothing
-			break;				
-		}
+//		switch (requestMethod) {
+//		case DELETE:
+//			row.style(Style.DANGER);
+//			break;
+//		case GET:
+//			row.style(Style.INFO);
+//			break;
+//		case POST:
+//			row.style(Style.SUCCESS);
+//			break;
+//		case PUT:
+//			row.style(Style.WARNING);
+//			break;
+//		case OPTIONS:
+//			break;
+//		case PATCH:
+//			break;
+//		case TRACE:
+//			break;
+//		default:
+//			// Nothing
+//			break;				
+//		}
 	}
 
 	@Override

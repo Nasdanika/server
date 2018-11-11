@@ -6,11 +6,11 @@ import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.InputType;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 
 /**
  * This class generates documentation panel HTML.

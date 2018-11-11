@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="route" name="Route Definitions" schema="schema/route.exsd"/>
-   <extension-point id="html_factory" name="HTML Factory" schema="schema/html_factory.exsd"/>
    <extension-point id="object_path_resolver" name="Object Path Resolver" schema="schema/object_path_resolver.exsd"/>
    <extension-point id="ui_part" name="UI Part" schema="schema/ui_part.exsd"/>
    <extension

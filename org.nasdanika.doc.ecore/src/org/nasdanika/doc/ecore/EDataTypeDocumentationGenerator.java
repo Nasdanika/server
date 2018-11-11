@@ -5,7 +5,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGenerator<EDataType> {
 	

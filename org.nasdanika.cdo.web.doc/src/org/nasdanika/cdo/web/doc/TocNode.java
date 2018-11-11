@@ -14,8 +14,8 @@ import org.json.JSONObject;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.TagName;
+import org.nasdanika.html.Markup.Event;
 
 public class TocNode {	
 	

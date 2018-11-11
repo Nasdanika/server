@@ -32,8 +32,8 @@ import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement;
+import org.nasdanika.html.TagName;
+import org.nasdanika.html.HTMLElement;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
@@ -305,7 +305,7 @@ public abstract class EModelElementDocumentationGenerator<T extends EModelElemen
 		return typedElement.getLowerBound() + ".." + (typedElement.getUpperBound()==-1 ? "*" : String.valueOf(typedElement.getUpperBound()));
 	}
 	
-	public static UIElement<?> preStyle(UIElement<?> uiElement) {
+	public static HTMLElement<?> preStyle(HTMLElement<?> uiElement) {
 		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
 	

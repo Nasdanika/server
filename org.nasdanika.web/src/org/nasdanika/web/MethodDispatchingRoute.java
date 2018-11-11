@@ -22,13 +22,13 @@ import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.ExtensionParameter;
 import org.nasdanika.core.ServiceParameter;
-import org.nasdanika.html.Bootstrap.Style;
+//import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TagName;
 import org.nasdanika.web.RouteMethod.Lock;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -454,13 +454,13 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 			row.cell(path);
 			row.cell(pattern);
 			if (methods.length==0 || Arrays.equals(RequestMethod.values(), methods)) {
-				row.cell("*").bootstrap().text().center();
+				row.cell("*");//.bootstrap().text().center();
 			} else if (methods.length==1) {
-				row.cell(methods[0].name()).bootstrap().text().center();
+				row.cell(methods[0].name());//.bootstrap().text().center();
 				styleApiRow(row, methods[0]);
 			} else {
 				Tag ul = row.getFactory().tag(TagName.ul);
-				row.cell(ul).bootstrap().text().center();
+				row.cell(ul);//.bootstrap().text().center();
 				for (RequestMethod rm: methods) {
 					ul.content(ul.getFactory().tag(TagName.li, rm.name()));
 				}
@@ -468,18 +468,18 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 			if (consumes == null || consumes.length==0) {
 				row.cell("");
 			} else if (consumes.length==1) {
-				row.cell(consumes[0]).bootstrap().text().center();
+				row.cell(consumes[0]);//.bootstrap().text().center();
 			} else {
 				Tag ul = row.getFactory().tag(TagName.ul);
-				row.cell(ul).bootstrap().text().center();
+				row.cell(ul);//.bootstrap().text().center();
 				for (String c: consumes) {
 					ul.content(ul.getFactory().tag(TagName.li, c));
 				}
 			}
-			row.cell(produces).bootstrap().text().center();
-			row.cell(htmlRequestModel).bootstrap().text().center();
-			row.cell(htmlResponseModel).bootstrap().text().center();
-			row.cell(priority).bootstrap().text().center();
+			row.cell(produces);//.bootstrap().text().center();
+			row.cell(htmlRequestModel);//.bootstrap().text().center();
+			row.cell(htmlResponseModel);//.bootstrap().text().center();
+			row.cell(priority);//.bootstrap().text().center();
 			if (lock == null) {
 				row.cell();
 			} else {
@@ -601,24 +601,24 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 		env.put("title", "Web API: "+sb);
 		Table apiTable = generateApiHtmlTable(context);		
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;		
-		env.put("content", htmlFactory.panel(Style.PRIMARY, "<H4><B>Web API:</B> "+sb+"</H4>", apiTable, null).style().margin("10px"));
+		env.put("content", htmlFactory.div("<H4><B>Web API:</B> "+sb+"</H4>", apiTable).style().margin("10px"));
 		String apiDoc = htmlFactory.interpolate(getApiDocumentationPageTemplate(), env);
 		return apiDoc;
 	}
 
 	@Override
 	protected Table generateApiHtmlTable(HttpServletRequestContext context) {
-		Table apiTable = HTMLFactory.INSTANCE.table().bordered();
-		Row hRow = apiTable.header().row().style(Style.PRIMARY);
+		Table apiTable = HTMLFactory.INSTANCE.table();//.bordered();
+		Row hRow = apiTable.header().row();//.style(Style.PRIMARY);
 		hRow.header("Path").rowspan(2);
 		hRow.header("Pattern").rowspan(2);
-		hRow.header("Method(s)").bootstrap().text().center();
-		hRow.header("Consumes").bootstrap().text().center();
-		hRow.header("Produces").bootstrap().text().center();
-		hRow.header("Request").bootstrap().text().center();
-		hRow.header("Response").bootstrap().text().center();
-		hRow.header("Priority").bootstrap().text().center();
-		hRow.header("Lock").bootstrap().text().center();		
+		hRow.header("Method(s)");//.bootstrap().text().center();
+		hRow.header("Consumes");//.bootstrap().text().center();
+		hRow.header("Produces");//.bootstrap().text().center();
+		hRow.header("Request");//.bootstrap().text().center();
+		hRow.header("Response");//.bootstrap().text().center();
+		hRow.header("Priority");//.bootstrap().text().center();
+		hRow.header("Lock");//.bootstrap().text().center();		
 		hRow.header("Comment");
 		
 		List<ApiInfo> apiInfos = new ArrayList<>();

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.nasdanika</groupId>
 	<artifactId>org.nasdanika.parent</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- tycho requires maven >= 3.0 -->
@@ -15,6 +15,7 @@
 
 	<properties>
 		<tycho-version>1.2.0</tycho-version>
+		<siteDir>products/server/${project.version}</siteDir>
 	</properties>
 
 	<repositories>
@@ -47,7 +48,7 @@
 		</repository>
 		<repository>
 			<id>html</id>
-			<url>http://www.nasdanika.org/products/html/repository</url>
+			<url>http://www.nasdanika.org/products/html/2.0.0-SNAPSHOT/repository</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -204,6 +205,50 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>ftp</id>
+						<phase>post-site</phase>
+						<configuration>
+							<target>
+								<ftp passive="yes" action="mkdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}"/>
+							
+								<ftp passive="yes" action="delete" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}">
+									<fileset defaultexcludes="false">
+										<include name="**" />
+									</fileset>
+								</ftp>
+								
+								<ftp passive="yes" action="rmdir" server="${env.FTP_SERVER}" userid="${env.FTP_USER}" password="${env.FTP_PASSWORD}" remotedir="/${siteDir}">
+									<fileset defaultexcludes="false">
+										<include name="**" />
+									</fileset>
+								</ftp>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>commons-net</groupId>
+						<artifactId>commons-net</artifactId>
+						<version>1.4.1</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-commons-net</artifactId>
+						<version>1.8.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>						
 		</plugins>
 	</build>
 	<modules>
@@ -211,7 +256,7 @@
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
 
-		<module>../org.nasdanika.doc.ecore</module>
+		<!-- <module>../org.nasdanika.doc.ecore</module> -->
 
 		<module>../org.nasdanika.cdo.security</module>
 		<module>../org.nasdanika.cdo.security.edit</module>
@@ -220,7 +265,7 @@
 		<module>../org.nasdanika.cdo.h2</module>
 		<module>../org.nasdanika.cdo</module>
 		<module>../org.nasdanika.cdo.web</module>
-		<module>../org.nasdanika.cdo.web.doc</module>
+		<!-- <module>../org.nasdanika.cdo.web.doc</module> -->
 		<module>../org.nasdanika.osgi.model</module>
 
 		<module>../org.nasdanika.cdo.scheduler</module>

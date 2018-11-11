@@ -7,7 +7,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tag;
+import org.nasdanika.html.TagName;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.Descriptor;
@@ -41,7 +41,7 @@ public class TestMethodResultDocumentationGenerator extends MethodResultDocument
 		HTMLFactory htmlFactory = ret.getFactory();
 		EList<String> parameters = obj.getParameters();
 		if (!parameters.isEmpty()) {			
-			ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
+			ret.content(htmlFactory.tag(TagName.h4, "Parameters"));
 			Table parametersTable = htmlFactory.table().bordered();
 			ret.content(parametersTable);
 			parametersTable.header().headerRow("Title", "Value", "Description", "Field", "Type").style(Bootstrap.Style.INFO);
