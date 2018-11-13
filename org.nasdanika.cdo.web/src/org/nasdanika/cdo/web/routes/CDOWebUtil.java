@@ -34,7 +34,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
-import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.JSONLoader;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -181,16 +180,13 @@ public class CDOWebUtil {
 		// Utility class
 	}
 		
-	@SuppressWarnings("rawtypes")
 	public static CDOObject resolvePath(Context context,  String path) throws Exception {		
 		CDOView view = context.adapt(CDOViewContext.class).getView();
 		String viewObjectsPath;
 		if (context instanceof HttpServletRequestContext) {
 			viewObjectsPath = ((HttpServletRequestContext) context).getObjectPath(view)+"/objects/";
-		} else if (context instanceof WebSocketContext) {
-			viewObjectsPath = ((WebSocketContext) context).getViewPath()+"/objects/";
 		} else {
-			throw new IllegalArgumentException("Context is an instance of neither "+HttpServletRequestContext.class.getName()+", nor "+WebSocketContext.class.getName());
+			throw new IllegalArgumentException("Context is not an instance of "+HttpServletRequestContext.class.getName());
 		}
 		if (!path.startsWith(viewObjectsPath)) {
 			throw new ServerException("Foreign object: "+path, HttpServletResponse.SC_NOT_FOUND);
@@ -329,7 +325,6 @@ public class CDOWebUtil {
 		if (ret instanceof JSONLoader) {
 			((JSONLoader) ret).loadJSON(json, context);
 		} else {
-			@SuppressWarnings("unchecked")
 			Iterator<String> kit = json.keys();
 			while (kit.hasNext()) {
 				String key = kit.next();
@@ -372,17 +367,12 @@ public class CDOWebUtil {
 		
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public static String getObjectPath(Context context, CDOObject cdoObject) throws Exception {
 		if (context instanceof HttpServletRequestContext) {
 			return ((HttpServletRequestContext) context).getObjectPath(cdoObject);
 		}
 		
-		if (context instanceof WebSocketContext) {
-			return ((WebSocketContext) context).getObjectPath((CDOObject) cdoObject);						
-		} 
-		
-		throw new IllegalArgumentException("Context is an instance of neither "+HttpServletRequestContext.class.getName()+", nor "+WebSocketContext.class.getName());						
+		throw new IllegalArgumentException("Context is not an instance of "+HttpServletRequestContext.class.getName());						
 	}
 	
 	public static JSONObject generateDataDefinitions(Context context, CDOObject cdoObject, DataDefinitionFilter filter) throws Exception {
@@ -523,7 +513,6 @@ public class CDOWebUtil {
 			if (val instanceof JSONObject) {			
 				Map<String, Object> ret = new HashMap<>();
 				JSONObject jsonVal = (JSONObject) val;
-				@SuppressWarnings("unchecked")
 				Iterator<String> kit = jsonVal.keys();
 				while (kit.hasNext()) {
 					String key = kit.next();

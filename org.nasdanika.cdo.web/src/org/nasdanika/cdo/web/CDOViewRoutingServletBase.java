@@ -11,14 +11,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
@@ -26,15 +23,12 @@ import org.nasdanika.cdo.LoginPasswordCDOViewContextSubject;
 import org.nasdanika.cdo.TokenCDOViewContextSubject;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
-import org.nasdanika.cdo.web.routes.CDOViewSessionModuleGenerator;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ContextProvider;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.RoutingServlet;
-import org.nasdanika.web.ValueAction;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -58,7 +52,6 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	public static final String USER_NAME_HEADER_HOST_PROPERTY = "org.nasdanika.cdo.web.userNameHeaderHost";
 	
 	protected ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
-	private String sessionWebSocketServletPath;
 	private String userNameHeader;
 	private String userNameHeaderHost;
 	
@@ -83,8 +76,6 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 				throw new ServletException("Unknown user-name-header-host", e);
 			}
 		}
-		
-		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
 		
 		BundleContext bundleContext = getBundleContext();
 		if (bundleContext==null) {
@@ -138,8 +129,6 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 		}
 		return super.filterAction(req, resp, context, action);
 	}
-	
-	private static final CDOViewSessionModuleGenerator cdoViewSessionModuleGenerator = new CDOViewSessionModuleGenerator();	
 
 	@Override
 	protected HttpServletRequestContext createContext(String[] path, final HttpServletRequest req, HttpServletResponse resp, String reqUrl, Context... chain) throws Exception {
@@ -204,35 +193,6 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	
 	protected abstract HttpServletRequestContext createCompositeContext(String[] path, final HttpServletRequest req, HttpServletResponse resp, String reqUrl, C viewContext, Context[] chain) throws Exception;
 	
-	@Override
-	protected ContextProvider<CDOViewWebSocketContext<V, CR>> createWebSocketContextProvider(
-			final HttpServletRequestContext context,
-			ServletUpgradeRequest upgradeRequest,
-			ServletUpgradeResponse upgradeResponse) throws Exception {
-		
-		@SuppressWarnings("unchecked")
-		final CDOViewContextSubject<V, CR> subject = ((CDOViewContext<V,CR>) context).getSubject();
-		
-		return new ContextProvider<CDOViewWebSocketContext<V,CR>>() {
-			
-			@Override
-			public CDOViewWebSocketContext<V, CR> createContext() {
-				CDOID targetID = null;
-				Object target = context.getTarget();
-				if (target instanceof CDOObject 
-						&& ((CDOObject) target).cdoView() != null
-						&& ((CDOObject) target).cdoID() != null
-						&& !((CDOObject) target).cdoID().isTemporary()) {
-					targetID = ((CDOObject) target).cdoID();
-				}
-				return createWebSocketContext(subject, targetID);
-			}
-			
-		};
-	}
-	
-	protected abstract CDOViewWebSocketContext<V, CR> createWebSocketContext(CDOViewContextSubject<V, CR> subject, CDOID targetID);
-
 	@Override
 	protected Iterable<Route> matchRootRoutes(RequestMethod method, String[] path) throws Exception {		
 		if (path.length==0) { 
@@ -325,35 +285,6 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			
 			});
 		}	
-		
-		if (path.length==1 && "session.js".equals(path[0])) {			
-			return Collections.<Route>singleton(new Route() {
-
-				@Override
-				public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-					@SuppressWarnings("unchecked")
-					CDOView view = ((CDOViewContext<?, CR>) context).getView();
-					if (RequestMethod.GET.equals(context.getMethod())) {
-						context.getResponse().setContentType("application/javascript");						
-						String fullSessionWebSocketServletPath = "ws://"+context.getRequest().getServerName()+":"+context.getRequest().getServerPort()+context.getRequest().getContextPath()+sessionWebSocketServletPath+"";
-						return new ValueAction(cdoViewSessionModuleGenerator.generate(context, view, fullSessionWebSocketServletPath));
-					}
-					
-					return Action.NOT_FOUND;
-				}
-
-				@Override
-				public boolean canExecute() {
-					return true;
-				}
-
-				@Override
-				public void close() throws Exception {
-					// NOP					
-				}
-			
-			});
-		}
 		
 		return super.matchRootRoutes(method, path);
 	}

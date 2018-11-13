@@ -4,77 +4,17 @@
    <extension-point id="renderer" name="EObject renderer" schema="schema/renderer.exsd"/>
    <extension
          point="org.nasdanika.web.route">
-      <object-route
-            class="org.nasdanika.cdo.web.routes.CDOPackageRegistryRoute"
-            method="GET"
-            target="org.eclipse.emf.cdo.common.model.CDOPackageRegistry">
-      </object-route>
-      <object-route
-            class="org.nasdanika.cdo.web.routes.CDOResourceFolderRoute"
-            method="*"
-            target="org.eclipse.emf.cdo.eresource.CDOResourceFolder">
-      </object-route>
-      <object-route
-            class="org.nasdanika.cdo.web.routes.ResourceRoute"
-            method="*"
-            target="org.eclipse.emf.ecore.resource.Resource">
-      </object-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.CDOViewJsonExtensionRoute"
-            extension="json"
-            method="GET"
-            target="org.eclipse.emf.cdo.view.CDOView">
-      </extension-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.HtmlExtensionGetRoute"
-            extension="html"
-            method="GET"
-            target="java.lang.Object">
-      </extension-route>
+ 
       <object-route
             class="org.nasdanika.cdo.web.routes.EObjectRoute"
             method="*"
             target="org.eclipse.emf.ecore.EObject">
       </object-route>
       <object-route
-            class="org.nasdanika.cdo.web.routes.EReferenceClosureRoute"
+            class="org.nasdanika.cdo.web.routes.ResourceRoute"
             method="*"
-            target="org.nasdanika.cdo.EReferenceClosure">
+            target="org.eclipse.emf.ecore.resource.Resource">
       </object-route>
-      <object-route
-            class="org.nasdanika.cdo.web.routes.EAttributeClosureRoute"
-            method="*"
-            target="org.nasdanika.cdo.EAttributeClosure">
-      </object-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.EObjectXMIExportRoute"
-            extension="xml"
-            method="GET"
-            target="org.eclipse.emf.ecore.EObject">
-      </extension-route>
-      <object-route
-            class="org.nasdanika.cdo.web.routes.EOperationClosureRoute"
-            method="*"
-            target="org.nasdanika.cdo.EOperationClosure">
-      </object-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.CDOResourceXMIExportRoute"
-            extension="xml"
-            method="GET"
-            target="org.eclipse.emf.cdo.eresource.CDOResource">
-      </extension-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute"
-            extension="js"
-            method="GET"
-            target="org.eclipse.emf.cdo.CDOObject">
-      </extension-route>
-      <extension-route
-            class="org.nasdanika.cdo.web.routes.EReferenceClosureJsonExtensionRoute"
-            extension="json"
-            method="GET"
-            target="org.nasdanika.cdo.EReferenceClosure">
-      </extension-route>
       
    </extension>
    <extension
@@ -134,18 +74,6 @@
       <resolver
             class="org.nasdanika.cdo.web.objectpathresolvers.CDOResourcePathResolver"
             target="org.eclipse.emf.cdo.eresource.CDOResource">
-      </resolver>
-      <resolver
-            class="org.nasdanika.cdo.web.objectpathresolvers.EPackagePathResolver"
-            target="org.eclipse.emf.ecore.EPackage">
-      </resolver>
-      <resolver
-            class="org.nasdanika.cdo.web.objectpathresolvers.EStructuralFeatureClosurePathResolver"
-            target="org.nasdanika.cdo.EStructuralFeatureClosure">
-      </resolver>
-      <resolver
-            class="org.nasdanika.cdo.web.objectpathresolvers.EOperationClosurePathResolver"
-            target="org.nasdanika.cdo.EOperationClosure">
       </resolver>
    </extension>
    <extension

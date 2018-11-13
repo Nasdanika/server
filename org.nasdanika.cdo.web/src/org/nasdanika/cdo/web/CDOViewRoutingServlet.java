@@ -44,31 +44,5 @@ public class CDOViewRoutingServlet<CR> extends CDOViewRoutingServletBase<CDOView
 				chain,				
 				viewContext);	
 	}
-
-	@Override
-	protected CDOViewWebSocketContext<CDOView, CR> createWebSocketContext(CDOViewContextSubject<CDOView, CR> subject, final CDOID targetID) {
-		CDOViewContextProvider<CDOView, CR, CDOViewContext<CDOView, CR>> provider = cdoViewContextProviderServiceTracker.getService();
-		if (provider==null) {
-			throw new IllegalStateException("View provider not found");
-		}
-		
-		class CDOViewWebSocketContextImpl extends CDOViewContextFilter<CDOView,CR> implements CDOViewContext<CDOView, CR>, CDOViewWebSocketContext<CDOView,CR> {
-
-			public CDOViewWebSocketContextImpl(CDOViewContext<CDOView,CR> target) {
-				super(target);
-			}
-
-			@Override
-			public CDOObject getTargetObject() {
-				if (targetID == null) {
-					return null;
-				}
-				return getView().getObject(targetID);
-			}
-			
-		}
-	
-		return new CDOViewWebSocketContextImpl(provider.createContext(subject));
-	}	
 			
 }

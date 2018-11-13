@@ -37,7 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
