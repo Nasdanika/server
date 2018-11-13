@@ -3,6 +3,7 @@ package org.nasdanika.cdo.web.routes;
 import org.eclipse.emf.cdo.CDOObject;
 import org.nasdanika.cdo.web.CDOTransactionHttpServletRequestContext;
 import org.nasdanika.core.ContextParameter;
+import org.nasdanika.html.emf.Renderer;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.TargetParameter;
 import org.osgi.framework.BundleContext;
@@ -12,11 +13,14 @@ import org.osgi.framework.BundleContext;
  * @author Pavel Vlasov
  *
  */
-public class RenderingRoute<T extends CDOObject, C extends CDOTransactionHttpServletRequestContext<?>> extends EDispatchingRoute {
+public abstract class RenderingRoute<T extends CDOObject, C extends CDOTransactionHttpServletRequestContext<?>> extends EDispatchingRoute {
 
 	protected RenderingRoute(BundleContext bundleContext) throws Exception {
 		super(bundleContext);
 	}
+	
+	protected abstract Renderer createRenderer(C context, CDOObject obj) throws Exception;
+	
 	
 	/**
 	 * Renders object view page - single value features in a table with two columns 
@@ -28,7 +32,7 @@ public class RenderingRoute<T extends CDOObject, C extends CDOTransactionHttpSer
 	public Object getIndexHtml(
 			@ContextParameter C context,
 			@TargetParameter T target) throws Exception {
-		return "Hello "+target;
+		return "Hello "+target+" "+createRenderer(context, target);
 	}
 	
 
