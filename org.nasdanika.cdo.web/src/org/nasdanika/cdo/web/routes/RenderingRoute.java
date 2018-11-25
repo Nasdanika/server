@@ -1,21 +1,39 @@
 package org.nasdanika.cdo.web.routes;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.CDOTransactionHttpServletRequestContext;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.html.emf.Renderer;
 import org.nasdanika.html.emf.RenderingContext;
 import org.nasdanika.html.emf.RenderingException;
+import org.nasdanika.web.Action;
+import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.TargetParameter;
 import org.osgi.framework.BundleContext;
+
 
 /**
  * Base class for routes which use HTML renderers to generate Web UI.
@@ -23,8 +41,7 @@ import org.osgi.framework.BundleContext;
  *
  */
 public abstract class RenderingRoute<T extends CDOObject, C extends CDOTransactionHttpServletRequestContext<?>, RC extends RenderingContext> extends EDispatchingRoute {
-	
-	
+		
 	private class RendererEntry implements Comparable<RendererEntry> {
 		
 		private EClass eClass;
@@ -132,6 +149,55 @@ public abstract class RenderingRoute<T extends CDOObject, C extends CDOTransacti
 			@TargetParameter T target) throws Exception {
 		return "Hello "+target+" "+createRenderer(context, target);
 	}
+		
+	/**
+	 * This method can be used for data backup and/or migration between instances/versions.
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(comment = "Exports the current object to XMI")
+	public void getExportXml(@ContextParameter C context, @TargetParameter T target) throws Exception {
+		if (target instanceof CDOObject) {
+			ResourceSet resourceSet = new ResourceSetImpl();
+			CDOObject cdoTarget = (CDOObject) target;
+			CDOView view = cdoTarget.cdoView();
+			Set<CDOObject> toLock = Collections.singleton(cdoTarget);
+			// TODO - use context locking
+			view.lockObjects(toLock, LockType.READ, TimeUnit.MINUTES.toMillis(1), true);
+			try {
+				resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+						org.eclipse.emf.ecore.resource.Resource.Factory.Registry.DEFAULT_EXTENSION,
+						new XMIResourceFactoryImpl());
+				String targetID = CDOIDCodec.INSTANCE.encode(context, cdoTarget.cdoID());
+				URI sourceURI = URI.createFileURI(File.createTempFile(targetID + "-export-", ".xml").getAbsolutePath());
+				org.eclipse.emf.ecore.resource.Resource resource = resourceSet.createResource(sourceURI);
+				resource.getContents().add(EcoreUtil.copy(target));
+				HttpServletResponse response = context.getResponse();
+				response.setContentType("text/xml");
+				response.setHeader("Content-Disposition", "attachment; filename=" + target.eClass().getName() + "-"	+ targetID + "-" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".xml");
+				resource.save(response.getOutputStream(), null);
+			} finally {
+				view.unlockObjects(toLock, LockType.READ, true);
+			}
+		}
+	}
+	
+	public static final String REFERRER_HEADER = "referer";	
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(comment="Invalidates session")
+	public Object getLogoutHtml(@ContextParameter C context, @HeaderParameter(REFERRER_HEADER) String referrer) throws Exception {
+		context.getRequest().getSession().invalidate();
+		if (referrer == null) {
+			return "Log out successful";
+		}
+		context.getResponse().sendRedirect(context.getRequest().getContextPath()+"/index.html");
+		return Action.NOP;
+	}
+	
 	
 
 }
